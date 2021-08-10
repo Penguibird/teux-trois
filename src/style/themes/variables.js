@@ -1,5 +1,5 @@
 module.exports = {
     variables: {
-        lineHeight: '1.2em',
+        lineHeight: '16px',
     }
 }

@@ -5,12 +5,12 @@ import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 
 
 import TodoItem from './../todo-item/todo-item';
-import Header from './components/header';
+import Header from './header/header';
 
 import { colors } from '../../style/themes/colors.js'
 import Todo from '../../types/Todo'
-import { useDragObserverContext } from '../../contexts/dragContext';
-import { useItemMoveObserverContext } from '../../contexts/itemMoveObserverContext';
+import useItemDragging from './useItemDragging/useItemDragging';
+
 
 const List = styled.div({
     display: 'flex',
@@ -54,53 +54,17 @@ interface TodoListProps {
 
 
 
-// a little function to help us with reordering the result
-const reorder = (list: any[], startIndex: number, endIndex: number) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
 
-    return result;
-};
 
 // Fetches no data just displays the thing
 const TodoList: React.FC<TodoListProps> = ({ children, datetime, todos, title, id, ...props }) => {
     const droppableID = `droppable-${id}`;
+
+
     const [items, setItems] = React.useState<Todo[]>(todos);
+    useItemDragging({ items, setItems, droppableID })
 
-
-    const { subscribe: onDragEnd } = useDragObserverContext();
-    const { subscribe: onItemMoved, publish: publishItemMove } = useItemMoveObserverContext();
-
-    // Handles the listener to the end of drag effect and appropriately removes the item
-    // Publishes the item moved event
-    React.useEffect(() => {
-        const unsubscribe = onDragEnd((result) => {
-            if (!result.destination) {
-                return;
-            }
-
-            if (result.source.droppableId === droppableID) {
-                const removedItem = items.splice(result.source.index, 1)[0];
-                publishItemMove(removedItem, result)
-                setItems([...items])
-            }
-
-        })
-        return unsubscribe;
-    }, [droppableID, items, onDragEnd, publishItemMove])
-
-
-    // Listens to the item moved event and adds it if appropriate
-    React.useEffect(() => {
-        const unsubscribe = onItemMoved((item, result) => {
-            if (!result.destination) return;
-            items.splice(result.destination?.index, 0, item);
-            setItems([...items])
-        }, droppableID)
-        return unsubscribe;
-    }, [droppableID, items, onItemMoved])
-
+    
     const toggleTodoDone = (i: number) => () => {
         items[i].done = !items[i].done;
         setItems([...items]);

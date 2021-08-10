@@ -53,7 +53,7 @@ const UnwrappedTodoBlock: React.FC<TodoBlockProps> = ({ }) => {
     ]
     const { publish } = useDragObserverContext();
 
-    return <DragDropContext onDragEnd={publish}>
+    return <DragDropContext onDragEnd={(result) => publish(result, result.source.droppableId)}>
         <TodoList id="34516951" todos={todos1} title="Monday" datetime="September 2, 2021" />
         <TodoList id="5622" todos={todos2} title="Tuesday" datetime="September 3, 2021" />
     </DragDropContext>
