@@ -11,6 +11,7 @@ import { colors } from '../../style/themes/colors.js'
 import Todo from '../../types/Todo'
 import useItemDragging from './useItemDragging/useItemDragging';
 
+import { MONTHNAMES } from '../../utils/dateHelpers'
 
 const List = styled.div({
     display: 'flex',
@@ -46,8 +47,8 @@ const getListStyle = (isDraggingOver: boolean) => ({
 
 interface TodoListProps {
     children?: React.ReactChildren
-    todos: Todo[]
-    datetime: string
+    todos?: Todo[]
+    datetime?: string | Date
     title: string
     id: string
 };
@@ -64,7 +65,7 @@ const TodoList: React.FC<TodoListProps> = ({ children, datetime, todos, title, i
     const [items, setItems] = React.useState<Todo[]>(todos);
     useItemDragging({ items, setItems, droppableID })
 
-    
+
     const toggleTodoDone = (i: number) => () => {
         items[i].done = !items[i].done;
         setItems([...items]);
@@ -78,9 +79,13 @@ const TodoList: React.FC<TodoListProps> = ({ children, datetime, todos, title, i
         setItems([...items])
     }
 
+    datetime = typeof datetime !== 'string'
+        ? `${MONTHNAMES[datetime?.getMonth() ?? 0]} ${datetime?.getDate()}, ${datetime?.getFullYear()}`
+        : datetime;
+
     return <List className="todo__list-wrapper" {...props}>
         <Header>{title}</Header>
-        <Date className="todo__list-date">{datetime}</Date>
+        {datetime && <Date className="todo__list-date">{datetime}</Date>}
         <Droppable droppableId={droppableID} type="TODOLIST">
             {(provided, snapshot) => (
                 <InnerList className="todo__list-inner"
