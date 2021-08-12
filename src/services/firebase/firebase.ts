@@ -1,7 +1,7 @@
 import firebase from "firebase";
 
 let firebaseInstance = firebase.initializeApp({
-    apiKey: "AIzaSyC9pknsKrse-GkoLc4GT3tx5BUltvem6dg",
+    apiKey: env.APIKEY,
     authDomain: "teux-trois.firebaseapp.com",
     projectId: "teux-trois",
     storageBucket: "teux-trois.appspot.com",
