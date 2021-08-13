@@ -44,6 +44,7 @@ function useTodos( id: string) {
             }
         }
         fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const updateTodo = (id: Todo["id"]) => async (updateTodoValues: Partial<Todo>) => {

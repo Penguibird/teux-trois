@@ -1,26 +1,18 @@
 import * as React from 'react';
-//import {Fragment, useState, useEffect} from 'react';
 import styled from '@emotion/styled';
-import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
-// import { v4 as uuid } from 'uuid'
+import { Droppable, } from "react-beautiful-dnd";
 
 import TodoItem from './components/todo-item/todo-item';
 import Header from './components/header/header';
-import Input from './components/todo-item-input/todo-item-input'
 
 import { colors } from '../../style/themes/colors.js'
 import Todo from '../../types/Todo'
 import useItemDragging from './hooks/useItemDragging';
 
 import { MONTHNAMES } from '../../utils/dateHelpers'
-import firebaseInstance from './../../services/firebase/firebase';
-import { useUserContext } from '../../contexts/userContext';
 
-import { StyledInput } from './components/todo-item-input/todo-item-input';
 import AddTodoItem from './components/add-todo-item/add-todo-item';
 import useTodos from './hooks/useTodos';
-import { useDragObserverContext } from '../../contexts/dragContext';
-import { useItemMoveObserverContext } from '../../contexts/itemMoveObserverContext';
 import useUpdateIndexes from './hooks/useUpdateIndexes';
 import { TodoContextProvider, useTodoContext } from './contexts/todosContext';
 import useUpdateDbOnItemAdded from './hooks/useUpdateDbOnItemAdded';
@@ -56,10 +48,7 @@ const InnerList = styled.ul({
 
 const getListStyle = (isDraggingOver: boolean) => ({
     // background: isDraggingOver ? "lightblue" : "lightgrey",
-
 });
-
-
 
 interface TodoListProps {
     children?: React.ReactChildren
@@ -68,10 +57,6 @@ interface TodoListProps {
     title: string
     id: string
 };
-
-
-
-
 
 // Fetches no data just displays the thing
 const UnwrappedTodoList: React.FC<TodoListProps> = ({ children, datetime, todos: initialTodos = [], title, id, ...props }) => {
@@ -90,8 +75,6 @@ const UnwrappedTodoList: React.FC<TodoListProps> = ({ children, datetime, todos:
 
     // Updates the items order after dragging
     useUpdateIndexes(updateTodo, droppableID)
-
-
 
     // Subscribes to drag actions and updates the db accordingly
     useUpdateDbOnItemAdded(droppableID, createTodo);

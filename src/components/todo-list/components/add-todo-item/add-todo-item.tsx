@@ -1,6 +1,4 @@
 import * as React from 'react';
-import Input from '../todo-item-input/todo-item-input';
-//import {Fragment, useState, useEffect} from 'react';
 import Todo from '../../../../types/Todo';
 import { StyledInput } from '../todo-item-input/todo-item-input';
 import useOutsideAlerter from '../../../../hooks/useOutsideAlerter';
@@ -12,7 +10,7 @@ interface AddTodoItemProps {
 
 const AddTodoItem: React.FC<AddTodoItemProps> = ({ addNewItem }) => {
     const ref = React.useRef<HTMLInputElement>();
-    
+
     useOutsideAlerter(ref, () => {
         closeInput()
     })

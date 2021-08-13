@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useUserContext } from './contexts/userContext';
 import LoginPage from './pages/login-page/login-page';
 //import {Fragment, useState, useEffect} from 'react';
-import Header from './components/todo-list/components/header/header';
 import WeekView from './components/week-view/week-view';
 
 interface RouterProps {

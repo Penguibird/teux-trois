@@ -82,7 +82,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ children, todo, index, toggleDone, 
     const onDone = React.useCallback((e: any) => {
         e.stopPropagation()
         remove();
-    }, [])
+    }, [remove])
 
     const toggleEdit = React.useCallback((e) => {
         e.stopPropagation();
