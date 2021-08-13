@@ -12,6 +12,10 @@ import Todo from '../../types/Todo'
 import useItemDragging from './useItemDragging/useItemDragging';
 
 import { MONTHNAMES } from '../../utils/dateHelpers'
+import firebaseInstance from './../../services/firebase/firebase';
+import { useUserContext } from '../../contexts/userContext';
+
+
 
 const List = styled.div({
     display: 'flex',
@@ -61,8 +65,34 @@ interface TodoListProps {
 const TodoList: React.FC<TodoListProps> = ({ children, datetime, todos, title, id, ...props }) => {
     const droppableID = `droppable-${id}`;
 
+    const user = useUserContext();
+    const [items, setItems] = React.useState<Todo[]>(todos || []);
 
-    const [items, setItems] = React.useState<Todo[]>(todos);
+    React.useEffect(() => {
+        async function fetchData() {
+            const db = firebaseInstance.firestore();
+            if (!user.user?.uid) return;
+            const docRef = db
+                .collection('users')
+                .doc(user.user?.uid)
+                .collection('todos')
+                .doc(id);
+            console.log(docRef)
+            try {
+                const data = await docRef.get();
+                if (!data.exists) {
+                    await docRef.set({ todos: [] });
+                } else {
+                    console.log(data.data())
+                    setItems(data.data()?.todos as unknown as Todo[])
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        }
+        fetchData();
+    }, [id, user, setItems])
+
     useItemDragging({ items, setItems, droppableID })
 
 

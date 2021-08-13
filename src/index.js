@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import path from 'path';
+// require('dotenv').config({path: path.resolve('../.env')})
 
 // import firebaseInstance from './services/firebase/firebase'
 

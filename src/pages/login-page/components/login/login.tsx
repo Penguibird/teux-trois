@@ -21,7 +21,7 @@ const Login: React.FC<LoginProps> = ({ }) => {
         if (!user || !setUser)
             return;
         setUser(user)
-        console.log(user)
+        // console.log(user)
     })
 
     useEffect(() => {
