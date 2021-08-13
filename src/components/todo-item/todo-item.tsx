@@ -68,11 +68,12 @@ interface TodoItemProps {
     toggleDone: () => void
     remove: () => void
     updateTodoText: (text: string) => void
+    editingInitialValue?: boolean
 };
 
-const TodoItem: React.FC<TodoItemProps> = ({ children, todo, index, toggleDone, remove, updateTodoText }) => {
+const TodoItem: React.FC<TodoItemProps> = ({ children, todo, index, toggleDone, remove, updateTodoText, editingInitialValue = false }) => {
 
-    const [editing, setEditing] = React.useState(false)
+    const [editing, setEditing] = React.useState(editingInitialValue)
 
     const onClick = React.useCallback((e) => {
         toggleDone()
@@ -111,8 +112,8 @@ const TodoItem: React.FC<TodoItemProps> = ({ children, todo, index, toggleDone, 
                         ? todo.text
                         : <Input
                             defaultValue={todo.text}
-                            setText={updateTodoText}
-                            setEditing={setEditing}
+                            onTextChange={updateTodoText}
+                            onTypingChange={setEditing}
                         />
                     }
                     <Button onClick={todo.done ? onDone : toggleEdit} done={todo.done} />

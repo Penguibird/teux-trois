@@ -2,10 +2,11 @@ import * as React from 'react';
 //import {Fragment, useState, useEffect} from 'react';
 import styled from '@emotion/styled';
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
-
+// import { v4 as uuid } from 'uuid'
 
 import TodoItem from './../todo-item/todo-item';
 import Header from './header/header';
+import Input from '../todo-item-input/todo-item-input'
 
 import { colors } from '../../style/themes/colors.js'
 import Todo from '../../types/Todo'
@@ -15,6 +16,9 @@ import { MONTHNAMES } from '../../utils/dateHelpers'
 import firebaseInstance from './../../services/firebase/firebase';
 import { useUserContext } from '../../contexts/userContext';
 
+import { StyledInput } from './../todo-item-input/todo-item-input';
+import AddTodoItem from './../add-todo-item/add-todo-item';
+import useTodos from './useTodos';
 
 
 const List = styled.div({
@@ -42,6 +46,9 @@ const InnerList = styled.ul({
         transparent 25px);`,
 })
 
+const TodoItemButton = styled(StyledInput)`
+`
+
 const getListStyle = (isDraggingOver: boolean) => ({
     // background: isDraggingOver ? "lightblue" : "lightgrey",
 
@@ -62,36 +69,12 @@ interface TodoListProps {
 
 
 // Fetches no data just displays the thing
-const TodoList: React.FC<TodoListProps> = ({ children, datetime, todos, title, id, ...props }) => {
+const TodoList: React.FC<TodoListProps> = ({ children, datetime, todos: initialTodos = [], title, id, ...props }) => {
     const droppableID = `droppable-${id}`;
 
-    const user = useUserContext();
-    const [items, setItems] = React.useState<Todo[]>(todos || []);
 
-    React.useEffect(() => {
-        async function fetchData() {
-            const db = firebaseInstance.firestore();
-            if (!user.user?.uid) return;
-            const docRef = db
-                .collection('users')
-                .doc(user.user?.uid)
-                .collection('todos')
-                .doc(id);
-            console.log(docRef)
-            try {
-                const data = await docRef.get();
-                if (!data.exists) {
-                    await docRef.set({ todos: [] });
-                } else {
-                    console.log(data.data())
-                    setItems(data.data()?.todos as unknown as Todo[])
-                }
-            } catch (e) {
-                console.log(e)
-            }
-        }
-        fetchData();
-    }, [id, user, setItems])
+
+    const { todos: items, setTodos: setItems, loading } = useTodos(initialTodos, id);
 
     useItemDragging({ items, setItems, droppableID })
 
@@ -108,6 +91,13 @@ const TodoList: React.FC<TodoListProps> = ({ children, datetime, todos, title, i
         items[i].text = text;
         setItems([...items])
     }
+
+
+
+    const addNewItem = React.useCallback((t: Todo) => {
+        setItems([...(items || []), t])
+
+    }, [items])
 
     datetime = typeof datetime !== 'string'
         ? `${MONTHNAMES[datetime?.getMonth() ?? 0]} ${datetime?.getDate()}, ${datetime?.getFullYear()}`
@@ -127,6 +117,7 @@ const TodoList: React.FC<TodoListProps> = ({ children, datetime, todos, title, i
                         <TodoItem remove={remove(i)} updateTodoText={updateTodoText(i)} toggleDone={toggleTodoDone(i)} todo={todo} key={todo.id} index={i} />
                     )}
                     {provided.placeholder}
+                    <AddTodoItem addNewItem={addNewItem} />
                 </InnerList>
             )}
         </Droppable>

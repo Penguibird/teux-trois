@@ -1,18 +1,21 @@
 import * as React from 'react';
 //import {Fragment, useState, useEffect} from 'react';
-import styled from '@emotion/styled'
+import styled, { StyledComponent } from '@emotion/styled'
 import useOutsideAlerter from '../../hooks/useOutsideAlerter';
 import { cleanup } from '@testing-library/react';
 
 interface InputProps {
-    defaultValue: string,
-    setEditing: (editing: boolean) => void,
-    setText: (text: string) => void,
+    defaultValue?: string,
+    onTypingChange: (editing: boolean) => void,
+    onTextChange: (text: string) => void,
 
     // myRef?: React.MutableRefObject<HTMLInputElement>,
 };
 
-const StyledInput = styled((props: any) => <input ref={props.myRef} {...props} />)`
+interface StyledInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    myRef?: React.MutableRefObject<HTMLInputElement | undefined>
+}
+export const StyledInput: StyledComponent<StyledInputProps> = styled((props: any) => <input ref={props.myRef} {...props} />)`
     padding: 0;
     margin: 0;
     border: none;
@@ -21,7 +24,7 @@ const StyledInput = styled((props: any) => <input ref={props.myRef} {...props} /
 
 `
 
-const Input: React.FC<InputProps> = ({ defaultValue, setEditing, setText, ...props }) => {
+const Input: React.FC<InputProps> = ({ defaultValue = "", onTypingChange, onTextChange, ...props }) => {
 
     const [value, setValue] = React.useState<string>(defaultValue)
 
@@ -36,22 +39,22 @@ const Input: React.FC<InputProps> = ({ defaultValue, setEditing, setText, ...pro
     useOutsideAlerter(inputRef, () => {
         // inputRef.current?.setSelectionRange(0, 0);
         closeInput();
-    }); 
+    });
 
     const closeInput = () => {
-        setText(value);
-        setEditing(false);
+        onTextChange(value);
+        onTypingChange(false);
     }
 
     return <StyledInput
         {...props}
         myRef={inputRef}
-        onClick={(e: MouseEvent) => e.stopPropagation()}
+        onClick={(e: React.MouseEvent) => e.stopPropagation()}
 
         value={value}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setValue(e.target.value) }}
 
-        onKeyPress={(e: KeyboardEvent) => {
+        onKeyPress={(e: React.KeyboardEvent) => {
             console.log(e)
             if (e.key === 'Enter') { closeInput() }
         }}
