@@ -13,11 +13,12 @@ function generateObserverContext<T>() {
 
     const genericObserver: () => observer<T> = () => {
         let listeners: {
-            [key: string]: listener<T>
+            [key: string]: listener<T>[]
         } = {};
 
         const subscribe = (listener: listener<T>, id: string) => {
-            listeners[id] = listener;
+            if (!listeners[id]) listeners[id] = [];
+            listeners[id].push(listener);
             return () => {
                 delete listeners[id];
 
@@ -26,7 +27,7 @@ function generateObserverContext<T>() {
 
         const publish = (e: MyEvent<T>, targetID: string) => {
             // if (!result.destination) return;
-            listeners[targetID](e)
+            listeners[targetID].forEach(f => f(e))
         }
         return { subscribe, publish }
     }

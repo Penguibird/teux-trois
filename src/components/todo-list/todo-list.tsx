@@ -4,21 +4,27 @@ import styled from '@emotion/styled';
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 // import { v4 as uuid } from 'uuid'
 
-import TodoItem from './../todo-item/todo-item';
-import Header from './header/header';
-import Input from '../todo-item-input/todo-item-input'
+import TodoItem from './components/todo-item/todo-item';
+import Header from './components/header/header';
+import Input from './components/todo-item-input/todo-item-input'
 
 import { colors } from '../../style/themes/colors.js'
 import Todo from '../../types/Todo'
-import useItemDragging from './useItemDragging/useItemDragging';
+import useItemDragging from './hooks/useItemDragging';
 
 import { MONTHNAMES } from '../../utils/dateHelpers'
 import firebaseInstance from './../../services/firebase/firebase';
 import { useUserContext } from '../../contexts/userContext';
 
-import { StyledInput } from './../todo-item-input/todo-item-input';
-import AddTodoItem from './../add-todo-item/add-todo-item';
-import useTodos from './useTodos';
+import { StyledInput } from './components/todo-item-input/todo-item-input';
+import AddTodoItem from './components/add-todo-item/add-todo-item';
+import useTodos from './hooks/useTodos';
+import { useDragObserverContext } from '../../contexts/dragContext';
+import { useItemMoveObserverContext } from '../../contexts/itemMoveObserverContext';
+import useUpdateIndexes from './hooks/useUpdateIndexes';
+import { TodoContextProvider, useTodoContext } from './contexts/todosContext';
+import useUpdateDbOnItemAdded from './hooks/useUpdateDbOnItemAdded';
+import useUpdateDbOnItemRemoved from './hooks/useUpdateDbOnItemRemoved';
 
 
 const List = styled.div({
@@ -46,8 +52,7 @@ const InnerList = styled.ul({
         transparent 25px);`,
 })
 
-const TodoItemButton = styled(StyledInput)`
-`
+
 
 const getListStyle = (isDraggingOver: boolean) => ({
     // background: isDraggingOver ? "lightblue" : "lightgrey",
@@ -69,35 +74,55 @@ interface TodoListProps {
 
 
 // Fetches no data just displays the thing
-const TodoList: React.FC<TodoListProps> = ({ children, datetime, todos: initialTodos = [], title, id, ...props }) => {
+const UnwrappedTodoList: React.FC<TodoListProps> = ({ children, datetime, todos: initialTodos = [], title, id, ...props }) => {
     const droppableID = `droppable-${id}`;
 
 
+    console.log("Rerendering todo list", droppableID)
 
-    const { todos: items, setTodos: setItems, loading } = useTodos(initialTodos, id);
+    const { todos, setTodos } = useTodoContext();
 
-    useItemDragging({ items, setItems, droppableID })
+    //Fetches todos
+    const { updateTodo, createTodo, removeTodo } = useTodos(id);
+
+    // Takes care of any item dragging/dropping logic
+    useItemDragging(droppableID)
+
+    // Updates the items order after dragging
+    useUpdateIndexes(updateTodo, droppableID)
+
+
+
+    // Subscribes to drag actions and updates the db accordingly
+    useUpdateDbOnItemAdded(droppableID, createTodo);
+    useUpdateDbOnItemRemoved(droppableID, removeTodo);
 
 
     const toggleTodoDone = (i: number) => () => {
-        items[i].done = !items[i].done;
-        setItems([...items]);
+        const newDoneValue = !todos[i].done;
+        todos[i].done = newDoneValue;
+        updateTodo(todos[i].id)({ done: newDoneValue });
+        setTodos([...todos]);
     }
+
     const remove = (i: number) => () => {
-        items.splice(i, 1);
-        setItems([...items]);
+        todos.splice(i, 1);
+        removeTodo(todos[i].id);
+        setTodos([...todos]);
     }
+
     const updateTodoText = (i: number) => (text: string) => {
-        items[i].text = text;
-        setItems([...items])
+        todos[i].text = text;
+        updateTodo(todos[i].id)({ text });
+        setTodos([...todos])
     }
-
-
 
     const addNewItem = React.useCallback((t: Todo) => {
-        setItems([...(items || []), t])
+        t.index = todos.length;
+        createTodo(t);
+        setTodos([...(todos || []), t])
 
-    }, [items])
+    }, [createTodo, todos, setTodos])
 
     datetime = typeof datetime !== 'string'
         ? `${MONTHNAMES[datetime?.getMonth() ?? 0]} ${datetime?.getDate()}, ${datetime?.getFullYear()}`
@@ -113,7 +138,7 @@ const TodoList: React.FC<TodoListProps> = ({ children, datetime, todos: initialT
                     ref={provided.innerRef}
                     style={getListStyle(snapshot.isDraggingOver)}
                 >
-                    {items?.map((todo: Todo, i) =>
+                    {todos?.map((todo: Todo, i) =>
                         <TodoItem remove={remove(i)} updateTodoText={updateTodoText(i)} toggleDone={toggleTodoDone(i)} todo={todo} key={todo.id} index={i} />
                     )}
                     {provided.placeholder}
@@ -124,6 +149,10 @@ const TodoList: React.FC<TodoListProps> = ({ children, datetime, todos: initialT
     </List>
 
 }
+
+const TodoList: React.FC<TodoListProps> = (props) => <TodoContextProvider>
+    <UnwrappedTodoList {...props} />
+</TodoContextProvider>
 
 export default TodoList;
 export type { TodoListProps };

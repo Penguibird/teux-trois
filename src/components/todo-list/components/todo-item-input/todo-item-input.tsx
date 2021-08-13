@@ -1,7 +1,7 @@
 import * as React from 'react';
 //import {Fragment, useState, useEffect} from 'react';
 import styled, { StyledComponent } from '@emotion/styled'
-import useOutsideAlerter from '../../hooks/useOutsideAlerter';
+import useOutsideAlerter from '../../../../hooks/useOutsideAlerter';
 import { cleanup } from '@testing-library/react';
 
 interface InputProps {

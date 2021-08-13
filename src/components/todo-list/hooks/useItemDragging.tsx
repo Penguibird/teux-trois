@@ -1,14 +1,8 @@
 import * as React from 'react'
 import { useDragObserverContext } from '../../../contexts/dragContext';
 import { useItemMoveObserverContext } from '../../../contexts/itemMoveObserverContext';
+import { useTodoContext } from '../contexts/todosContext';
 import Todo from './../../../types/Todo';
-
-interface useItemDraggingProps {
-    items: Todo[],
-    setItems: React.Dispatch<React.SetStateAction<Todo[]>>,
-    droppableID: string,
-
-}
 
 // a little function to help us with reordering the result
 const reorder = (list: any[], startIndex: number, endIndex: number) => {
@@ -25,7 +19,9 @@ const reorder = (list: any[], startIndex: number, endIndex: number) => {
  * @param setItems the items state
  * 
  */
-const useItemDragging = ({ items, setItems, droppableID }: useItemDraggingProps) => {
+const useItemDragging = (droppableID: string ) => {
+    const { todos: items, setTodos: setItems } = useTodoContext();
+
     const { subscribe: onDragEnd } = useDragObserverContext();
     const { subscribe: onItemMoved, publish: publishItemMove } = useItemMoveObserverContext();
 
@@ -58,7 +54,7 @@ const useItemDragging = ({ items, setItems, droppableID }: useItemDraggingProps)
             setItems([...items])
         }, droppableID)
         return unsubscribe;
-    }, [droppableID, items, onItemMoved, setItems]) 
+    }, [droppableID, items, onItemMoved, setItems])
 }
 
 export default useItemDragging;

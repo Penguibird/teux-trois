@@ -1,9 +1,9 @@
 import * as React from 'react';
 //import {Fragment, useState, useEffect} from 'react';
 import styled from '@emotion/styled';
-import { colors } from '../../style/themes/colors';
-import CrossIcon from './../../assets/images/cross-icon';
-import EditIcon from './../../assets/images/edit-icon';
+import { colors } from '../../../../style/themes/colors';
+import CrossIcon from '../../../../assets/images/cross-icon';
+import EditIcon from '../../../../assets/images/edit-icon';
 
 const StyledButton = styled.button`
     display: none;
