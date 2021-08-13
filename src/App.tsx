@@ -10,7 +10,6 @@ interface AppProps {
 const App: React.FC<AppProps> = ({ }) => {
 
     return <UserContextProvider>
-        Hello World
         <Router />
     </UserContextProvider>
 }

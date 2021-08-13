@@ -17,6 +17,8 @@ interface StyledInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 export const StyledInput: StyledComponent<StyledInputProps> = styled((props: any) => <input ref={props.myRef} {...props} />)`
     padding: 0;
     margin: 0;
+    margin-left: .4em;
+    margin-bottom: -0.1em;
     border: none;
     outline: none !important;
     width: 100%;

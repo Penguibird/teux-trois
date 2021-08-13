@@ -24,6 +24,7 @@ const List = styled.div({
     alignItems: 'center',
     justifyContent: 'flex-start',
     flexDirection: 'column',
+    padding: '0.5em',
 })
 
 const Date = styled.p({
@@ -35,6 +36,7 @@ const Date = styled.p({
 const InnerList = styled.ul({
     marginTop: '2em',
     width: '100%',
+    flex: '1 1 auto',
     backgroundImage: `repeating-linear-gradient(
         transparent,
         transparent 22px,

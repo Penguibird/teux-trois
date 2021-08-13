@@ -6,7 +6,6 @@ import { Draggable, } from 'react-beautiful-dnd';
 
 import Todo from '../../../../types/Todo'
 import Input from '../todo-item-input/todo-item-input';
-import { variables } from '../../../../style/themes/variables';
 import Button, { StyledButton } from '../todo-item-button/todo-item-button';
 
 const TextWrapper = styled.p`
@@ -29,7 +28,7 @@ interface ItemProps {
 
 const Item = styled.div<ItemProps>`
     width: 100%;
-    margin: .1666666667rem 0;
+    margin: .1rem 0 .1666666667rem 0;
     padding: 0.15rem;
 
     text-align: start;
@@ -37,7 +36,7 @@ const Item = styled.div<ItemProps>`
 
     cursor: grab;
     text-decoration: ${props => props.done && 'line-through'};
-    height: ${variables.lineHeight};
+    height: 17.5px;
 
     ${TextWrapper} {
         background-color: ${props => props.isDragging && colors.primaryColorLighter};

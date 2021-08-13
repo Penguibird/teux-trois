@@ -14,6 +14,17 @@ interface WeekViewProps {
 };
 
 const StyledDiv = styled.div`
+    margin-top: 80px;
+    height: 60vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    & > * {
+        flex: 1 1 0;
+        
+    }
 `
 
 
