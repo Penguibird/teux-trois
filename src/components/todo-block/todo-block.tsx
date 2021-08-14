@@ -12,7 +12,7 @@ interface TodoBlockProps {
 // Fetches the data and puts it in a List
 // Contains no styling
 const UnwrappedTodoBlock: React.FC<TodoBlockProps> = ({ }) => {
-    const todos1: Todo[] = [
+    const todos1: Partial<Todo>[] = [
         {
             id: '1',
             text: 'Sit ullamco laborum commodo veniam labore commodo anim fugiat in.',
@@ -34,7 +34,7 @@ const UnwrappedTodoBlock: React.FC<TodoBlockProps> = ({ }) => {
             done: false,
         }
     ]
-    const todos2: Todo[] = [
+    const todos2: Partial<Todo>[] = [
         {
             id: '12',
             text: 'Deserunt consectetur eiusmod pariatur cupidatat nulla non.',
@@ -54,8 +54,8 @@ const UnwrappedTodoBlock: React.FC<TodoBlockProps> = ({ }) => {
     const { publish } = useDragObserverContext();
 
     return <DragDropContext onDragEnd={(result) => publish(result, result.source.droppableId)}>
-        <TodoList id="34516951" todos={todos1} title="Monday" datetime="September 2, 2021" />
-        <TodoList id="5622" todos={todos2} title="Tuesday" datetime="September 3, 2021" />
+        <TodoList id="34516951" todos={todos1.map((v, i) => ({ ...v, index: i } as Todo))} title="Monday" datetime="September 2, 2021" />
+        <TodoList id="5622" todos={todos2.map((v, i) => ({ ...v, index: i } as Todo))} title="Tuesday" datetime="September 3, 2021" />
     </DragDropContext>
 }
 
