@@ -3,61 +3,50 @@ import { useUserContext } from '../../../contexts/userContext';
 import firebaseInstance from '../../../services/firebase/firebase';
 import Todo from '../../../types/Todo';
 import { useTodoContext } from '../contexts/todosContext';
+import firebase from 'firebase';
+import useGenericFirebaseFetch from './../../../hooks/useGenericFirebaseFetch';
 
-function useTodos( id: string) {
-    const [loading, setLoading] = React.useState(true)
-    const [error, setError] = React.useState(null)
-    const { setTodos } = useTodoContext();
+function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
 
     const user = useUserContext();
+    const { setTodos } = useTodoContext();
 
-    const collectionRef = React.useMemo(() => {
-        if (!user.user?.uid) return;
+    const collectionRef = React.useMemo<firebase.firestore.CollectionReference<firebase.firestore.DocumentData>>(() => {
         const db = firebaseInstance.firestore();
-        const collectionRef = db
+
+        return db
             .collection('users')
             .doc(user.user?.uid)
-            .collection('todos')
+            .collection(todosCollection)
             .doc(id)
-            .collection('items');
-        return collectionRef;
-    }, [id, user.user?.uid])
+            .collection('items')
 
-    React.useEffect(() => {
-        async function fetchData() {
+    }, [id, todosCollection, user.user?.uid]);
 
-            console.log("Fetching dataaaa")
-            if (!collectionRef) return;
-            try {
-                const data = await collectionRef
-                    .orderBy("index")
-                    .get();
+    const orderedCollectionRef = React.useMemo(
+        () => collectionRef.orderBy("index"),
+        [collectionRef]
+    )
 
-                console.log(data.docs.map(_ => _.data()))
-                setLoading(false);
-                setTodos(data.docs.map(_ => _.data()) as unknown as Todo[])
+    const outputCallback = React.useCallback(
+        (data: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => { setTodos(data.docs.map(_ => _.data()) as unknown as Todo[]) },
+        [setTodos]
+    )
+    const { loading, error } = useGenericFirebaseFetch({
+        collectionRef: orderedCollectionRef, outputCallback
+    })
 
-            } catch (e) {
-                console.error(e)
-                setLoading(false)
-                setError(e)
-            }
-        }
-        fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
 
     const updateTodo = (id: Todo["id"]) => async (updateTodoValues: Partial<Todo>) => {
         await collectionRef?.doc(id).update(updateTodoValues);
     }
 
     const createTodo = async (newTodo: Todo) => {
-        console.log(newTodo)
         await collectionRef?.doc(newTodo.id).set(newTodo);
     }
 
-    const removeTodo = (id: Todo["id"]) => async () => {
-        await collectionRef?.doc(id).delete();
+    const removeTodo = async (id: Todo["id"]) => {
+        await collectionRef?.doc(id).delete().then(console.log).catch(console.log);
     }
     return { loading, error, updateTodo, createTodo, removeTodo }
 }

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useUserContext } from './contexts/userContext';
 import LoginPage from './pages/login-page/login-page';
 //import {Fragment, useState, useEffect} from 'react';
-import WeekView from './components/week-view/week-view';
+import TodosPage from './pages/todos-page/todos-page';
 
 interface RouterProps {
     //    children: React.ReactChildren
@@ -13,9 +13,7 @@ const Router: React.FC<RouterProps> = ({ }) => {
     return <React.Fragment>
         {!user
             ? <LoginPage />
-            : <div>
-                <WeekView />
-            </div>
+            : <TodosPage />
         }
     </React.Fragment>
 }

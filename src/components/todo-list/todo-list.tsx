@@ -2,10 +2,10 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { Droppable, } from "react-beautiful-dnd";
 
-import TodoItem from './components/todo-item/todo-item';
+import TodoItem, { Item } from './components/todo-item/todo-item';
 import Header from './components/header/header';
 
-import { colors } from '../../style/themes/colors.js'
+import { colors, variables } from '../../style/themes/colors.js'
 import Todo from '../../types/Todo'
 import useItemDragging from './hooks/useItemDragging';
 
@@ -17,17 +17,46 @@ import useUpdateIndexes from './hooks/useUpdateIndexes';
 import { TodoContextProvider, useTodoContext } from './contexts/todosContext';
 import useUpdateDbOnItemAdded from './hooks/useUpdateDbOnItemAdded';
 import useUpdateDbOnItemRemoved from './hooks/useUpdateDbOnItemRemoved';
+import useTodoListCallbacks from './hooks/useTodoListCallbacks';
+import compareObjects from './../../utils/compareObjects';
 
 
-const List = styled.div({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    flexDirection: 'column',
-    padding: '0.5em',
-})
+const List = styled.div<{ isToday?: boolean, isInThePast?: boolean }>`
+    box-sizing: border-box;    
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    padding: 0em 1em;
+    width: calc((100vw - (${variables.sideBarWidth}) * 2) / 5);
+    * + & {
+        border-left: ${colors.borderGray} ${variables.borderWidth} solid;
+    }
+    &:last-child {
+        border-right: ${colors.borderGray} ${variables.borderWidth} solid;
+    }
+    ${props => props.isToday && `
+        color: ${colors.primaryColor};
+        ${Header}, ${DateText}, ${Item} {
+            color: ${colors.primaryColor};
+        }
+        ${Item}:hover {
+            color: ${colors.dark};
+        }
+    `}
+    ${props => props.isInThePast && `
+        color: ${colors.crossedTodoColor};
+        ${Header}, ${DateText}, ${Item} {
+            color: ${colors.crossedTodoColor};
+        }
+        ${Item}:hover {
+            color: ${colors.dark};
+        }
+    `}
+    
+`
 
-const Date = styled.p({
+const DateText = styled.p({
     textTransform: 'uppercase',
     fontSize: '.6111111111rem',
     marginTop: '.2777777778rem'
@@ -55,22 +84,27 @@ const getListStyle = (isDraggingOver: boolean) => ({
 interface TodoListProps {
     children?: React.ReactChildren
     todos?: Todo[]
-    datetime?: string | Date
+    datetime?: string | Date | number
+    // datetimeNumber?: number
     title: string
     id: string
+    isToday?: boolean
+    isInThePast?: boolean
+    customList?: boolean
 };
 
 // Fetches no data just displays the thing
-const UnwrappedTodoList: React.FC<TodoListProps> = ({ children, datetime, todos: initialTodos = [], title, id, ...props }) => {
+const UnwrappedTodoList: React.FC<TodoListProps> = ({ children, customList, datetime, todos: initialTodos = [], title, id, isToday, isInThePast, ...props }) => {
     const droppableID = `droppable-${id}`;
-
-
     console.log("Rerendering todo list", droppableID)
 
-    const { todos, setTodos } = useTodoContext();
+    const { todos } = useTodoContext();
 
     //Fetches todos
-    const { updateTodo, createTodo, removeTodo } = useTodos(id);
+    const { updateTodo, createTodo, removeTodo } = useTodos(id, customList ? 'customTodos' : 'todos');
+
+    // Creates all the callbacks for the TodoItem
+    const { toggleTodoDone, remove, updateTodoText, addNewItem } = useTodoListCallbacks({ updateTodo, createTodo, removeTodo });
 
     // Takes care of any item dragging/dropping logic
     useItemDragging(droppableID)
@@ -83,39 +117,20 @@ const UnwrappedTodoList: React.FC<TodoListProps> = ({ children, datetime, todos:
     useUpdateDbOnItemRemoved(droppableID, removeTodo);
 
 
-    const toggleTodoDone = (i: number) => () => {
-        const newDoneValue = !todos[i].done;
-        todos[i].done = newDoneValue;
-        updateTodo(todos[i].id)({ done: newDoneValue });
-        setTodos([...todos]);
-    }
+    const displayDate = React.useMemo(() => {
+        if (!datetime)
+            return;
+        if (typeof datetime == 'string')
+            return datetime;
+        const date: Date = typeof datetime == 'number' ? (new Date(datetime)) : datetime;
 
-    const remove = (i: number) => () => {
-        todos.splice(i, 1);
-        removeTodo(todos[i].id);
-        setTodos([...todos]);
-    }
+        return `${MONTHNAMES[date?.getMonth() ?? 0]} ${date?.getDate()}, ${date?.getFullYear()}`;
 
-    const updateTodoText = (i: number) => (text: string) => {
-        todos[i].text = text;
-        updateTodo(todos[i].id)({ text });
-        setTodos([...todos])
-    }
+    }, [datetime])
 
-    const addNewItem = React.useCallback((t: Todo) => {
-        t.index = todos.length;
-        createTodo(t);
-        setTodos([...(todos || []), t])
-
-    }, [createTodo, todos, setTodos])
-
-    datetime = typeof datetime !== 'string'
-        ? `${MONTHNAMES[datetime?.getMonth() ?? 0]} ${datetime?.getDate()}, ${datetime?.getFullYear()}`
-        : datetime;
-
-    return <List className="todo__list-wrapper" {...props}>
+    return <List className="todo__list-wrapper" {...props} isToday={isToday} isInThePast={isInThePast}>
         <Header>{title}</Header>
-        {datetime && <Date className="todo__list-date">{datetime}</Date>}
+        {(datetime) && <DateText className="todo__list-date">{displayDate}</DateText>}
         <Droppable droppableId={droppableID} type="TODOLIST">
             {(provided, snapshot) => (
                 <InnerList className="todo__list-inner"
@@ -124,7 +139,7 @@ const UnwrappedTodoList: React.FC<TodoListProps> = ({ children, datetime, todos:
                     style={getListStyle(snapshot.isDraggingOver)}
                 >
                     {todos?.map((todo: Todo, i) =>
-                        <TodoItem remove={remove(i)} updateTodoText={updateTodoText(i)} toggleDone={toggleTodoDone(i)} todo={todo} key={todo.id} index={i} />
+                        <TodoItem remove={remove} updateTodoText={updateTodoText} toggleDone={toggleTodoDone} todo={todo} key={todo.id} index={i} />
                     )}
                     {provided.placeholder}
                     <AddTodoItem addNewItem={addNewItem} />
@@ -135,9 +150,11 @@ const UnwrappedTodoList: React.FC<TodoListProps> = ({ children, datetime, todos:
 
 }
 
-const TodoList: React.FC<TodoListProps> = (props) => <TodoContextProvider>
+const UnmemoizedTodoList: React.FC<TodoListProps> = (props) => <TodoContextProvider>
     <UnwrappedTodoList {...props} />
 </TodoContextProvider>
+
+const TodoList = React.memo(UnmemoizedTodoList, compareObjects(['id', 'datetime', 'title', 'children']));
 
 export default TodoList;
 export type { TodoListProps };

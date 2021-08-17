@@ -36,10 +36,15 @@ const Item = styled.div<ItemProps>`
 
     cursor: grab;
     text-decoration: ${props => props.done && 'line-through'};
+    &:not(:hover) {
+
+        color: ${props => (props.done && !props.editing && !props.isDragging) && colors.crossedTodoColor};
+    }
     height: 17.5px;
 
     ${TextWrapper} {
         background-color: ${props => props.isDragging && colors.primaryColorLighter};
+        color: ${props => props.isDragging && colors.dark};
         opacity: ${props => props.isDragging && '0.8'};
     }
 
@@ -64,24 +69,24 @@ interface TodoItemProps {
     done?: boolean
     todo: Todo
     index: number
-    toggleDone: () => void
-    remove: () => void
-    updateTodoText: (text: string) => void
+    toggleDone: (i: number) => void
+    remove: (i: number) => void
+    updateTodoText: (i: number, text: string) => void
     editingInitialValue?: boolean
 };
 
-const TodoItem: React.FC<TodoItemProps> = ({ children, todo, index, toggleDone, remove, updateTodoText, editingInitialValue = false }) => {
+const UnmemoizedTodoItem: React.FC<TodoItemProps> = ({ children, todo, index, toggleDone, remove, updateTodoText, editingInitialValue = false }) => {
 
     const [editing, setEditing] = React.useState(editingInitialValue)
 
     const onClick = React.useCallback((e) => {
-        toggleDone()
-    }, [toggleDone])
+        toggleDone(index)
+    }, [index, toggleDone])
 
     const onDone = React.useCallback((e: any) => {
         e.stopPropagation()
-        remove();
-    }, [remove])
+        remove(index);
+    }, [index, remove])
 
     const toggleEdit = React.useCallback((e) => {
         e.stopPropagation();
@@ -92,13 +97,20 @@ const TodoItem: React.FC<TodoItemProps> = ({ children, todo, index, toggleDone, 
         setEditing(true);
     }, [])
 
+    const onTextChange = React.useCallback((text: string) => {
+        updateTodoText(index, text);
+    }, [index, updateTodoText])
+
     return <Draggable draggableId={todo.id} index={index}>
         {(provided, snapshot) => (
             <Item
                 ref={provided.innerRef}
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
-                style={provided.draggableProps.style}
+                style={{
+                    ...provided.draggableProps.style,
+                    position: 'static'
+                }}
                 className="todo-item"
                 isDragging={snapshot.isDragging}
                 editing={editing}
@@ -111,7 +123,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ children, todo, index, toggleDone, 
                         ? todo.text
                         : <Input
                             defaultValue={todo.text}
-                            onTextChange={updateTodoText}
+                            onTextChange={onTextChange}
                             onTypingChange={setEditing}
                         />
                     }
@@ -122,5 +134,8 @@ const TodoItem: React.FC<TodoItemProps> = ({ children, todo, index, toggleDone, 
     </Draggable>
 }
 
+const TodoItem = React.memo(UnmemoizedTodoItem);
+
 export default TodoItem;
+export { Item };
 
