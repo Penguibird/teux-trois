@@ -8,7 +8,7 @@ import DoubleArrowIcon from './../../assets/images/double-arrow-icon';
 import { variables } from '../../style/themes/colors';
 import HomeIcon from './../../assets/images/home-icon';
 import useMoveCarousel from './useMoveCarousel';
-import { SideBar, Button } from '../sidebar/sidebar';
+import { SideBar, Button, ButtonProps } from '../../components-style/sidebar/sidebar';
 
 
 interface WeekViewProps {
@@ -39,7 +39,10 @@ const TodoListGrid = styled.div<{ leftShift?: string }>`
         flex: 1 1 0;
     }
 `
-
+const ShiftingButton = styled(Button) <ButtonProps>`
+    transform: translateX(${props => props.flipped && '-'}.2em);
+    transition: transform .1s ease-in-out;
+`
 
 const UnwrappedWeekView: React.FC<WeekViewProps> = ({ }) => {
 
@@ -65,26 +68,26 @@ const UnwrappedWeekView: React.FC<WeekViewProps> = ({ }) => {
 
     return <MainWrapperGrid>
         <SideBar left>
-            <Button size='4em' red onClick={move.oneLeft}>
+            <ShiftingButton size='4em' red onClick={move.oneLeft}>
                 <ArrowIcon direction='left' />
-            </Button>
-            <Button onClick={move.fiveLeft}>
+            </ShiftingButton>
+            <ShiftingButton onClick={move.fiveLeft}>
                 <DoubleArrowIcon direction='left' />
-            </Button>
-            <Button onClick={onToday!}>
+            </ShiftingButton>
+            <ShiftingButton onClick={onToday!}>
                 <HomeIcon />
-            </Button>
+            </ShiftingButton>
         </SideBar>
         <TodoListGrid leftShift={getTransformValue(leftShift, days.length)}>
             {days.map((v, i) => <TodoList isToday={v === today} isInThePast={v < today} id={getDateId(v)} key={getDateId(v)} datetime={v} title={DAYSOFTHEWEEK[getWeekDayIndexFromDateTimeNumber(v)]} />)}
         </TodoListGrid >
         <SideBar>
-            <Button size='4em' red flipped onClick={move.oneRight}>
+            <ShiftingButton size='4em' red flipped onClick={move.oneRight}>
                 <ArrowIcon direction='right' />
-            </Button>
-            <Button flipped onClick={move.fiveRight}>
+            </ShiftingButton>
+            <ShiftingButton flipped onClick={move.fiveRight}>
                 <DoubleArrowIcon direction='right' />
-            </Button>
+            </ShiftingButton>
         </SideBar>
     </MainWrapperGrid>
 }

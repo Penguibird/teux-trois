@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useDragObserverContext } from '../../../contexts/dragContext';
-import Todo from './../../../types/Todo';
+import { useDragObserverContext } from '../contexts/dragContext';
+import Todo from '../types/Todo';
 
 
 const useUpdateDbOnItemRemoved = (droppableID: string, removeTodo: (a: Todo['id']) => Promise<unknown>) => {

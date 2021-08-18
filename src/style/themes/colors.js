@@ -14,5 +14,6 @@ module.exports = {
     variables: {
         borderWidth: '1.5px',
         sideBarWidth: '5rem',
+        dotButtonWidth: '8px',
     }
 }

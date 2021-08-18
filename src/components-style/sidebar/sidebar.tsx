@@ -1,7 +1,7 @@
 import { colors, variables } from "../../style/themes/colors";
 import { CSSLength } from "../../types/CssTypes";
 import styled from '@emotion/styled';
-import UnstyledButton from './../unstyledButton';
+import UnstyledButton from '../unstyledButton';
 
 const SideBar = styled.div<{ left?: boolean }>`
     background-color: ${colors.background};
@@ -33,13 +33,14 @@ const Button = styled(UnstyledButton) <ButtonProps>`
 
     fill: ${props => props.red ? colors.primaryColor : colors.borderGray};
     &:hover {
-        transform: translateX(${props => props.flipped && '-'}.2em);
-        transition: transform .1s ease-in-out;
+
         svg {
             fill: ${colors.primaryColor};
         }
     }
 `
 
-export { SideBar, Button };
+
+
+export { SideBar, Button, };
 export type { ButtonProps }

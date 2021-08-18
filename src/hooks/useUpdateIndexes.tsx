@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useDragObserverContext } from '../../../contexts/dragContext';
-import { useItemMoveObserverContext } from '../../../contexts/itemMoveObserverContext';
-import Todo from '../../../types/Todo';
+import { useDragObserverContext } from '../contexts/dragContext';
+import { useItemMoveObserverContext } from '../contexts/itemMoveObserverContext';
+import Todo from '../types/Todo';
 import { useTodoContext } from '../contexts/todosContext';
 
 const useUpdateIndexes = (updateTodo: (id: Todo["id"]) => (todo: Partial<Todo>) => void, droppableID: string) => {
@@ -26,8 +26,8 @@ const useUpdateIndexes = (updateTodo: (id: Todo["id"]) => (todo: Partial<Todo>) 
         }, droppableID)
         return unsubscribe
     }, [droppableID, subscribe, updateTodoListIndexes])
-    
-    const {subscribe: subscribe2} = useItemMoveObserverContext();
+
+    const { subscribe: subscribe2 } = useItemMoveObserverContext();
     React.useEffect(() => {
         const unsubscribe = subscribe2((e) => {
             console.log(e)

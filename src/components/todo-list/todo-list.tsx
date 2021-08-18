@@ -1,24 +1,28 @@
+/** @jsxRuntime classic /
+/** @jsx jsx */
+import { jsx } from '@emotion/core';
 import * as React from 'react';
 import styled from '@emotion/styled';
 import { Droppable, } from "react-beautiful-dnd";
 
-import TodoItem, { Item } from './components/todo-item/todo-item';
-import Header from './components/header/header';
+import TodoItem, { Item } from '../todo-item/todo-item';
+import Header from '../../components-style/header/header';
 
 import { colors, variables } from '../../style/themes/colors.js'
 import Todo from '../../types/Todo'
-import useItemDragging from './hooks/useItemDragging';
+import useItemDragging from '../../hooks/useItemDragging';
 
 import { MONTHNAMES } from '../../utils/dateHelpers'
 
-import AddTodoItem from './components/add-todo-item/add-todo-item';
-import useTodos from './hooks/useTodos';
-import useUpdateIndexes from './hooks/useUpdateIndexes';
-import { TodoContextProvider, useTodoContext } from './contexts/todosContext';
-import useUpdateDbOnItemAdded from './hooks/useUpdateDbOnItemAdded';
-import useUpdateDbOnItemRemoved from './hooks/useUpdateDbOnItemRemoved';
-import useTodoListCallbacks from './hooks/useTodoListCallbacks';
+import AddTodoItem from '../add-todo-item/add-todo-item';
+import { TodoContextProvider, useTodoContext } from '../../contexts/todosContext';
 import compareObjects from './../../utils/compareObjects';
+import EditableHeader from './editable-header';
+import useTodoListCallbacks from './../../hooks/useTodoListCallbacks';
+import useTodos from './../../hooks/useTodos';
+import useUpdateIndexes from './../../hooks/useUpdateIndexes';
+import useUpdateDbOnItemAdded from './../../hooks/useUpdateDbOnItemAdded';
+import useUpdateDbOnItemRemoved from './../../hooks/useUpdateDbOnItemRemoved';
 
 
 const List = styled.div<{ isToday?: boolean, isInThePast?: boolean }>`
@@ -82,7 +86,7 @@ const getListStyle = (isDraggingOver: boolean) => ({
 });
 
 interface TodoListProps {
-    children?: React.ReactChildren
+    children?: unknown
     todos?: Todo[]
     datetime?: string | Date | number
     // datetimeNumber?: number
@@ -91,12 +95,26 @@ interface TodoListProps {
     isToday?: boolean
     isInThePast?: boolean
     customList?: boolean
+    editable?: boolean
+    headerEditingComponent?: unknown,
 };
 
+
+
 // Fetches no data just displays the thing
-const UnwrappedTodoList: React.FC<TodoListProps> = ({ children, customList, datetime, todos: initialTodos = [], title, id, isToday, isInThePast, ...props }) => {
+const UnwrappedTodoList: React.FC<TodoListProps> = ({ headerEditingComponent, editable, children, customList, datetime, todos: initialTodos = [], title, id, isToday, isInThePast, ...props }) => {
     const droppableID = `droppable-${id}`;
     console.log("Rerendering todo list", droppableID)
+
+    const displayDate = React.useMemo(() => {
+        if (!datetime)
+            return;
+        if (typeof datetime == 'string')
+            return datetime;
+        const date: Date = typeof datetime == 'number' ? (new Date(datetime)) : datetime;
+        return `${MONTHNAMES[date?.getMonth() ?? 0]} ${date?.getDate()}, ${date?.getFullYear()}`;
+    }, [datetime])
+
 
     const { todos } = useTodoContext();
 
@@ -117,19 +135,10 @@ const UnwrappedTodoList: React.FC<TodoListProps> = ({ children, customList, date
     useUpdateDbOnItemRemoved(droppableID, removeTodo);
 
 
-    const displayDate = React.useMemo(() => {
-        if (!datetime)
-            return;
-        if (typeof datetime == 'string')
-            return datetime;
-        const date: Date = typeof datetime == 'number' ? (new Date(datetime)) : datetime;
-
-        return `${MONTHNAMES[date?.getMonth() ?? 0]} ${date?.getDate()}, ${date?.getFullYear()}`;
-
-    }, [datetime])
-
     return <List className="todo__list-wrapper" {...props} isToday={isToday} isInThePast={isInThePast}>
-        <Header>{title}</Header>
+        {editable
+            ? <EditableHeader id={id} title={title} />
+            : <Header>{title}</Header>}
         {(datetime) && <DateText className="todo__list-date">{displayDate}</DateText>}
         <Droppable droppableId={droppableID} type="TODOLIST">
             {(provided, snapshot) => (
@@ -157,4 +166,5 @@ const UnmemoizedTodoList: React.FC<TodoListProps> = (props) => <TodoContextProvi
 const TodoList = React.memo(UnmemoizedTodoList, compareObjects(['id', 'datetime', 'title', 'children']));
 
 export default TodoList;
+export { List, Header, DateText, InnerList }
 export type { TodoListProps };

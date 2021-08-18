@@ -1,6 +1,7 @@
 import { useTodoContext } from "../contexts/todosContext";
 import * as React from 'react';
-import Todo from './../../../types/Todo';
+import Todo from '../types/Todo';
+import { v4 as uuid } from 'uuid';
 
 interface useTodoListCallbacksProps {
     updateTodo: (id: string) => (updateTodoValues: Partial<Todo>) => Promise<void>;
@@ -32,8 +33,13 @@ const useTodoListCallbacks = ({ updateTodo, createTodo, removeTodo }: useTodoLis
         setTodos([...todos])
     }, [setTodos, todos, updateTodo])
 
-    const addNewItem = React.useCallback((t: Todo) => {
-        t.index = todos.length;
+    const addNewItem = React.useCallback((text: string) => {
+        const t: Todo = {
+            text,
+            id: uuid(),
+            done: false,
+            index: todos.length,
+        }
         createTodo(t);
         setTodos([...(todos || []), t])
 

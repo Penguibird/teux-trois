@@ -1,6 +1,6 @@
-import { useItemMoveObserverContext } from "../../../contexts/itemMoveObserverContext";
+import { useItemMoveObserverContext } from "../contexts/itemMoveObserverContext";
 import * as React from 'react';
-import Todo from './../../../types/Todo';
+import Todo from '../types/Todo';
 
 const useUpdateDbOnItemAdded = (droppableID: string, createTodo: (t: Todo) => unknown) => {
     const { subscribe: addEventListenerOnItemAdded } = useItemMoveObserverContext();

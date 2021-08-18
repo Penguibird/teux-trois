@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 /**
  * Hook that alerts clicks outside of the passed ref
  */
-function useOutsideAlerter(ref: React.MutableRefObject<HTMLElement | undefined>, callback: () => void) {
+function useOutsideAlerter(ref: React.RefObject<HTMLInputElement> | React.MutableRefObject<HTMLElement | undefined>, callback: () => void) {
     useEffect(() => {
         /**
          * Alert if clicked on outside of element

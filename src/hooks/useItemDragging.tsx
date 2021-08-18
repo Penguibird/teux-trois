@@ -1,6 +1,6 @@
 import * as React from 'react'
-import { useDragObserverContext } from '../../../contexts/dragContext';
-import { useItemMoveObserverContext } from '../../../contexts/itemMoveObserverContext';
+import { useDragObserverContext } from '../contexts/dragContext';
+import { useItemMoveObserverContext } from '../contexts/itemMoveObserverContext';
 import { useTodoContext } from '../contexts/todosContext';
 
 /**

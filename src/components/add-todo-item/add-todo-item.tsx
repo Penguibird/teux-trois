@@ -1,17 +1,24 @@
+/** @jsxRuntime classic /
+/** @jsx jsx */
+import { jsx } from '@emotion/core';
 import * as React from 'react';
-import Todo from '../../../../types/Todo';
-import { StyledInput } from '../todo-item-input/todo-item-input';
-import useOutsideAlerter from '../../../../hooks/useOutsideAlerter';
-import { v4 as uuid } from 'uuid';
+import useOutsideAlerter from '../../hooks/useOutsideAlerter';
+import { SerializedStyles } from '@emotion/react';
+// import styled from '@emotion/styled';
+import { StyledInputCss } from './../../components-style/styledInput';
 
 interface AddTodoItemProps {
-    addNewItem: (t: Todo) => void
+    addNewItem: (t: string) => void
+    onCancel?: () => void
+    css?: SerializedStyles
+    focusOnRender?: boolean
 };
 
-const AddTodoItem: React.FC<AddTodoItemProps> = ({ addNewItem }) => {
-    const ref = React.useRef<HTMLInputElement>();
+const AddTodoItem: React.FC<AddTodoItemProps> = ({ focusOnRender, css = StyledInputCss, addNewItem, onCancel }) => {
+    const ref = React.useRef<HTMLInputElement>(null);
 
     useOutsideAlerter(ref, () => {
+        console.log("CLick outside")
         closeInput()
     })
     const [text, setText] = React.useState<string>('');
@@ -25,27 +32,29 @@ const AddTodoItem: React.FC<AddTodoItemProps> = ({ addNewItem }) => {
             if (e.key === 'Escape') {
                 setText('');
                 ref.current?.blur();
+                if (onCancel) onCancel();
             }
         }
         window.addEventListener('keydown', handler)
         return () => {
             window.removeEventListener('keydown', handler)
         }
-    }, [])
+    }, [onCancel])
+
+    React.useLayoutEffect(() => {
+        if (focusOnRender) ref.current?.focus();
+    }, [focusOnRender])
 
     const closeInput = React.useCallback(() => {
         if (text === "") return;
         setText('')
-        addNewItem({
-            text,
-            id: uuid(),
-            done: false,
-            index: -1,
-        })
+        addNewItem(text)
     }, [addNewItem, text])
 
-    return <StyledInput
-        myRef={ref}
+    return <input
+        //@ts-ignore
+        css={css}
+        ref={ref}
         value={text}
         onChange={onChange}
         onClick={(e: React.MouseEvent) => e.stopPropagation()}

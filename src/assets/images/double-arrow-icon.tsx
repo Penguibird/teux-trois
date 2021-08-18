@@ -1,6 +1,6 @@
 import * as React from 'react';
 //import {Fragment, useState, useEffect} from 'react';
-import { RotatingDiv, RotatingDivProps } from '../../components/RotatingDiv';
+import { RotatingDiv, RotatingDivProps } from '../../components-style/RotatingDiv';
 
 interface DoubleArrowIconProps extends RotatingDivProps {
 

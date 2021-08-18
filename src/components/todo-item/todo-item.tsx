@@ -1,12 +1,12 @@
 import * as React from 'react';
 //import {Fragment, useState, useEffect} from 'react';
 import styled from '@emotion/styled';
-import { colors } from '../../../../style/themes/colors';
+import { colors } from '../../style/themes/colors';
 import { Draggable, } from 'react-beautiful-dnd';
 
-import Todo from '../../../../types/Todo'
-import Input from '../todo-item-input/todo-item-input';
-import Button, { StyledButton } from '../todo-item-button/todo-item-button';
+import Todo from '../../types/Todo'
+import Input from './todo-item-input/todo-item-input';
+import Button, { StyledButton } from './todo-item-button/todo-item-button';
 
 const TextWrapper = styled.p`
 
