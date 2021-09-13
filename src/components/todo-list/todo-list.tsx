@@ -23,6 +23,8 @@ import useTodos from './../../hooks/useTodos';
 import useUpdateIndexes from './../../hooks/useUpdateIndexes';
 import useUpdateDbOnItemAdded from './../../hooks/useUpdateDbOnItemAdded';
 import useUpdateDbOnItemRemoved from './../../hooks/useUpdateDbOnItemRemoved';
+import { useCollection } from '@nandorojo/swr-firestore';
+import { useUserContext } from '../../contexts/userContext';
 
 
 const List = styled.div<{ isToday?: boolean, isInThePast?: boolean }>`
@@ -116,10 +118,15 @@ const UnwrappedTodoList: React.FC<TodoListProps> = ({ headerEditingComponent, ed
     }, [datetime])
 
 
-    const { todos } = useTodoContext();
+    // const { todos } = useTodoContext();
 
     //Fetches todos
-    const { updateTodo, createTodo, removeTodo } = useTodos(id, customList ? 'customTodos' : 'todos');
+    const user = useUserContext();
+    const userId = user.user?.uid;
+    const { data, add, mutate } = useCollection(`users/${userId}/todos/${id}/items`)
+    const todos = data?.map(doc => doc.__snapshot?.data() as Todo)
+
+    const createTodo = (newTodo) => add({}) 
 
     // Creates all the callbacks for the TodoItem
     const { toggleTodoDone, remove, updateTodoText, addNewItem } = useTodoListCallbacks({ updateTodo, createTodo, removeTodo });

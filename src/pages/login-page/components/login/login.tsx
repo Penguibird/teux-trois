@@ -3,7 +3,8 @@ import { useEffect } from 'react';
 
 import firebase from 'firebase';
 import * as firebaseui from 'firebaseui';
-import firebaseInstance from '../../../../services/firebase/firebase';
+// import firebaseInstance from '../../../../services/firebase/firebase';
+import {fuego as firebaseInstance} from '@nandorojo/swr-firestore';
 import { useUserContext } from '../../../../contexts/userContext';
 
 interface LoginProps {
