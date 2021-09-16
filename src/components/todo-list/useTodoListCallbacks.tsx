@@ -1,6 +1,6 @@
-import { useTodoContext } from "../contexts/todosContext";
+import { useTodoContext } from "./context";
 import * as React from 'react';
-import Todo from '../types/Todo';
+import Todo from '../../types/Todo';
 import { v4 as uuid } from 'uuid';
 
 interface useTodoListCallbacksProps {

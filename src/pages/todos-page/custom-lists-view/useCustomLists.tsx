@@ -1,11 +1,11 @@
 
-import firebaseInstance from '../services/firebase/firebase';
+import firebaseInstance from '../../../services/firebase/firebase';
 import * as React from 'react';
 import firebase from 'firebase';
-import { TodoList } from '../types/TodoList';
-import useGenericFirebaseFetch from './useGenericFirebaseFetch';
-import { useUserContext } from '../contexts/userContext';
-import { useTodoListsContext } from '../contexts/customTodoListContext';
+import { TodoList } from '../../../types/TodoList';
+import useGenericFirebaseFetch from '../../../hooks/useGenericFirebaseFetch';
+import { useUserContext } from '../../../contexts/userContext';
+import { useTodoListsContext } from './context';
 
 export const useCustomLists = () => {
     const user = useUserContext();

@@ -1,10 +1,10 @@
 import * as React from 'react'
-import { useUserContext } from '../contexts/userContext';
-import firebaseInstance from '../services/firebase/firebase';
-import Todo from '../types/Todo';
-import { useTodoContext } from '../contexts/todosContext';
+import { useUserContext } from '../../contexts/userContext';
+import firebaseInstance from '../../services/firebase/firebase';
+import Todo from '../../types/Todo';
+import { useTodoContext } from './context';
 import firebase from 'firebase';
-import useGenericFirebaseFetch from './useGenericFirebaseFetch';
+import useGenericFirebaseFetch from '../../hooks/useGenericFirebaseFetch';
 
 function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
 

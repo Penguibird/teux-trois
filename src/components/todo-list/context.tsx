@@ -1,5 +1,5 @@
 import React, { useContext, useState, createContext, useMemo, } from 'react';
-import Todo from '../types/Todo';
+import Todo from '../../types/Todo';
 
 
 interface todoStateType {

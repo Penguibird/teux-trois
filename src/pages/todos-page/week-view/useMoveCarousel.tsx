@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DAYINMILIS } from "../../utils/dateHelpers";
+import { DAYINMILIS } from "../../../utils/dateHelpers";
 
 const useMoveCarousel = (days: any[], setDays?: React.Dispatch<React.SetStateAction<number[]>>, mondayOfThisWeek?: number) => {
     const [leftShift, setLeftShift] = React.useState(0);

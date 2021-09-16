@@ -1,23 +1,27 @@
 import * as React from 'react';
-import { SideBar, Button } from '../../components-style/sidebar/sidebar';
+import { SideBar, Button } from '../../../components-style/sidebar/sidebar';
 import { getTransformValue, MainWrapperGrid, TodoListGrid } from '../week-view/week-view';
-//import {Fragment, useState, useEffect} from 'react';
-import TodoList from './../todo-list/todo-list';
-import ArrowIcon from './../../assets/images/arrow-icon';
-import DoubleArrowIcon from './../../assets/images/double-arrow-icon';
-import useMoveCarousel from './../week-view/useMoveCarousel';
+//import { Fragment, useState, useEffect, useMemo } from 'react';
+import TodoList from '../../../components/todo-list/todo-list';
+import ArrowIcon from '../../../assets/images/arrow-icon';
+import DoubleArrowIcon from '../../../assets/images/double-arrow-icon';
 import styled from '@emotion/styled';
-import { colors, variables } from '../../style/themes/colors';
-import PlusIcon from './../../assets/images/plus-icon';
-import UnstyledButton from '../../components-style/unstyledButton';
-import AddTodoList from './../todo-list/add-todo-list';
-import { headerCss } from '../../components-style/header/header';
-import AddTodoItem from '../add-todo-item/add-todo-item';
+import { colors, variables } from '../../../style/themes/colors';
+import PlusIcon from '../../../assets/images/plus-icon';
+import UnstyledButton from '../../../components-style/unstyledButton';
+import AddTodoList from '../../../components/todo-list/add-todo-list';
+import { headerCss } from '../../../components/todo-list/listHeader/header';
+import AddTodoItem from '../../../components/add-todo-item/add-todo-item';
 import { v4 } from 'uuid';
 
-import { TodoList as TodoListType } from '../../types/TodoList'
-import { TodoListsContextProvider, useTodoListsContext } from '../../contexts/customTodoListContext';
-import { useCustomLists } from '../../hooks/useCustomLists';
+import { TodoList as TodoListType } from '../../../types/TodoList'
+import { TodoListsContextProvider, useTodoListsContext } from './context';
+import { useCustomLists } from './useCustomLists';
+import { DroppableProvided, DroppableStateSnapshot, DropResult, Draggable } from 'react-beautiful-dnd';
+import { Droppable } from 'react-beautiful-dnd';
+import HandleIcon from '../../../assets/images/handle-icon';
+import { useDragObserverContext } from '../../../contexts/dragContext';
+import useMoveCustomLists from './useMoveCustomLists';
 
 const BottomWrapperGrid = styled(MainWrapperGrid)`
     margin-top: 0;
@@ -118,6 +122,14 @@ interface CustomListsViewProps {
 
 };
 
+const Handle = styled(UnstyledButton)`
+    height: 1em;
+    svg {
+        height: 100%;
+    }
+`;
+const TopBar = styled.div``;
+
 const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
     const ctx = useTodoListsContext();
     const { setTodoLists } = ctx
@@ -125,16 +137,7 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
 
     const { collectionRef } = useCustomLists();
 
-    const { leftShift, move } = useMoveCarousel(todoLists);
-
-    const showLeftButtons = React.useMemo<boolean>(
-        () => leftShift !== 0,
-        [leftShift]
-    )
-    const showRightButtons = React.useMemo<boolean>(
-        () => todoLists.length > 5 && leftShift <= todoLists.length - 4,
-        [leftShift, todoLists.length]
-    )
+    const { leftShift, move, showLeftButtons, showRightButtons } = useMoveCustomLists(todoLists);
 
     const [showCustomLists, setShowCustomLists] = React.useState(true);
     const toggleCustomLists = React.useCallback(() => {
@@ -168,6 +171,30 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
     }, [])
 
 
+    const onDragEnd = React.useCallback((result: DropResult,) => {
+        console.log(result)
+        if (result.destination) {
+
+            const [item] = todoLists.splice(result.source.index, 1);
+            todoLists.splice(result.destination?.index, 0, item);
+            todoLists
+                // .splice(0, Math.max(result.source.index, result.destination.index))
+                .forEach((todoList, i) => {
+                    todoList.index = i;
+                    collectionRef.doc(todoList.docId).update({ index: i })
+                })
+            setTodoLists([...todoLists]);
+
+            // Update the database of all the shifted lists
+        }
+    }, [collectionRef, setTodoLists, todoLists])
+
+    const { subscribe } = useDragObserverContext();
+    React.useEffect(() => {
+        const unsubscribe = subscribe(onDragEnd, "CUSTOMLISTS");
+        return unsubscribe;
+    }, [onDragEnd, subscribe])
+
     console.log(todoLists)
     return <BottomWrapperGrid>
         <TopRibbon>
@@ -175,8 +202,8 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
                 <ArrowIcon direction={showCustomLists ? 'down' : 'up'} />
             </LeftJustifiedButton>
             <DotsList>
-                {todoLists.map((v, i) => <StyledLi>
-                    <Dot />
+                {todoLists.map((v, i) => <StyledLi key={i}>
+                    <Dot as="button" onClick={move.target(i )} />
                     <Label>{v.name}</Label>
                 </StyledLi>)}
             </DotsList>
@@ -195,14 +222,43 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
                     </Button>
                 </>}
             </SideBar>
-            <TodoListGrid leftShift={getTransformValue(leftShift, todoLists.length)}>
-                {todoLists.map((v, i) => <TodoList editable id={v.docId} title={v.name} key={v.docId} customList>
+            <Droppable type="CUSTOMLISTS" droppableId="CUSTOMLISTS">
+                {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) =>
+                    <TodoListGrid
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                        leftShift={getTransformValue(leftShift, todoLists.length)}
+                    >
+                        {todoLists.map((v, i) =>
+                            <Draggable key={v.docId} draggableId={v.docId} index={i}>
+                                {(provided, snapshot) => (
+                                    <TodoList
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        style={{
+                                            ...provided.draggableProps.style,
+                                            position: 'static'
+                                        }}
+                                        editable id={v.docId} title={v.name} key={v.docId} customList
+                                    >
+                                        <TopBar>
+                                            <Handle {...provided.dragHandleProps} >
+                                                <HandleIcon />
+                                            </Handle>
+                                        </TopBar>
+                                    </TodoList>
+                                )}
+                            </Draggable>
+                        )}
+                        {provided.placeholder}
+                        {addingTodoList && <AddTodoList>
+                            <AddTodoItem focusOnRender css={headerCss} addNewItem={onAddNewItem} onCancel={onCancelAddTodoList} />
+                        </AddTodoList>}
+                    </TodoListGrid>
+                }
+            </Droppable>
 
-                </TodoList>)}
-                {addingTodoList && <AddTodoList>
-                    <AddTodoItem focusOnRender css={headerCss} addNewItem={onAddNewItem} onCancel={onCancelAddTodoList} />
-                </AddTodoList>}
-            </TodoListGrid>
+
             <SideBar>
                 {showRightButtons && <>
                     <Button size='4em' red flipped onClick={move.oneRight}>

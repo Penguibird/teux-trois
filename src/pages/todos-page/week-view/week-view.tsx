@@ -1,14 +1,14 @@
 import * as React from 'react';
 //import {Fragment, useState, useEffect} from 'react';
 import styled from '@emotion/styled';
-import { DAYINMILIS, DAYSOFTHEWEEK, getDateId } from '../../utils/dateHelpers';
-import TodoList from './../todo-list/todo-list';
-import ArrowIcon from './../../assets/images/arrow-icon';
-import DoubleArrowIcon from './../../assets/images/double-arrow-icon';
-import { variables } from '../../style/themes/colors';
-import HomeIcon from './../../assets/images/home-icon';
+import { DAYINMILIS, DAYSOFTHEWEEK, getDateId } from '../../../utils/dateHelpers';
+import TodoList from '../../../components/todo-list/todo-list';
+import ArrowIcon from '../../../assets/images/arrow-icon';
+import DoubleArrowIcon from '../../../assets/images/double-arrow-icon';
+import { variables } from '../../../style/themes/colors';
+import HomeIcon from '../../../assets/images/home-icon';
 import useMoveCarousel from './useMoveCarousel';
-import { SideBar, Button, ButtonProps } from '../../components-style/sidebar/sidebar';
+import { SideBar, Button, ButtonProps } from '../../../components-style/sidebar/sidebar';
 
 
 interface WeekViewProps {

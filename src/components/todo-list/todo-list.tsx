@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { Droppable, } from "react-beautiful-dnd";
 
 import TodoItem, { Item } from '../todo-item/todo-item';
-import Header from '../../components-style/header/header';
+import Header from './listHeader/header';
 
 import { colors, variables } from '../../style/themes/colors.js'
 import Todo from '../../types/Todo'
@@ -15,11 +15,11 @@ import useItemDragging from '../../hooks/useItemDragging';
 import { MONTHNAMES } from '../../utils/dateHelpers'
 
 import AddTodoItem from '../add-todo-item/add-todo-item';
-import { TodoContextProvider, useTodoContext } from '../../contexts/todosContext';
+import { TodoContextProvider, useTodoContext } from './context';
 import compareObjects from './../../utils/compareObjects';
-import EditableHeader from './editable-header';
-import useTodoListCallbacks from './../../hooks/useTodoListCallbacks';
-import useTodos from './../../hooks/useTodos';
+import EditableHeader from './listHeader/editable-header';
+import useTodoListCallbacks from './useTodoListCallbacks';
+import useTodos from './useTodos';
 import useUpdateIndexes from './../../hooks/useUpdateIndexes';
 import useUpdateDbOnItemAdded from './../../hooks/useUpdateDbOnItemAdded';
 import useUpdateDbOnItemRemoved from './../../hooks/useUpdateDbOnItemRemoved';
@@ -60,24 +60,24 @@ const List = styled.div<{ isToday?: boolean, isInThePast?: boolean }>`
     
 `
 
-const DateText = styled.p({
-    textTransform: 'uppercase',
-    fontSize: '.6111111111rem',
-    marginTop: '.2777777778rem'
-})
+const DateText = styled.p`
+    text-transform: uppercase;
+    font-size: .6111111111rem;
+    margin-top: .2777777778rem;
+`
 
-const InnerList = styled.ul({
-    marginTop: '2em',
-    width: '100%',
-    flex: '1 1 auto',
-    backgroundImage: `repeating-linear-gradient(
+const InnerList = styled.ul`
+    margin-top: 2em;
+    width: 100%;
+    flex: 1 1 auto;
+    background-image: repeating-linear-gradient(
         transparent,
         transparent 22px,
         ${colors.borderGray} 22px,
         ${colors.borderGray} 23.23px,
         transparent 23.23px,
-        transparent 25px);`,
-})
+        transparent 25px);
+`;
 
 
 
@@ -85,8 +85,8 @@ const getListStyle = (isDraggingOver: boolean) => ({
     // background: isDraggingOver ? "lightblue" : "lightgrey",
 });
 
-interface TodoListProps {
-    children?: unknown
+interface TodoListProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+    children?: React.ReactNode;
     todos?: Todo[]
     datetime?: string | Date | number
     // datetimeNumber?: number
@@ -102,7 +102,7 @@ interface TodoListProps {
 
 
 // Fetches no data just displays the thing
-const UnwrappedTodoList: React.FC<TodoListProps> = ({ headerEditingComponent, editable, children, customList, datetime, todos: initialTodos = [], title, id, isToday, isInThePast, ...props }) => {
+const UnwrappedTodoList = React.forwardRef<any, any>(({ headerEditingComponent, editable, children, customList, datetime, todos: initialTodos = [], title, id, isToday, isInThePast, ...props }: TodoListProps, ref: React.LegacyRef<HTMLDivElement>) => {
     const droppableID = `droppable-${id}`;
     console.log("Rerendering todo list", droppableID)
 
@@ -135,7 +135,10 @@ const UnwrappedTodoList: React.FC<TodoListProps> = ({ headerEditingComponent, ed
     useUpdateDbOnItemRemoved(droppableID, removeTodo);
 
 
-    return <List className="todo__list-wrapper" {...props} isToday={isToday} isInThePast={isInThePast}>
+
+    return <List className="todo__list-wrapper" {...props} ref={ref} isToday={isToday} isInThePast={isInThePast}>
+        {/* Handle */}
+        {children}
         {editable
             ? <EditableHeader id={id} title={title} />
             : <Header>{title}</Header>}
@@ -157,11 +160,11 @@ const UnwrappedTodoList: React.FC<TodoListProps> = ({ headerEditingComponent, ed
         </Droppable>
     </List>
 
-}
+})
 
-const UnmemoizedTodoList: React.FC<TodoListProps> = (props) => <TodoContextProvider>
-    <UnwrappedTodoList {...props} />
-</TodoContextProvider>
+const UnmemoizedTodoList = React.forwardRef<any, any>((props, ref) => <TodoContextProvider>
+    <UnwrappedTodoList {...props} ref={ref} />
+</TodoContextProvider>)
 
 const TodoList = React.memo(UnmemoizedTodoList, compareObjects(['id', 'datetime', 'title', 'children']));
 
