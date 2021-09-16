@@ -7,11 +7,7 @@ import { Draggable } from 'react-beautiful-dnd';
 import Todo from '../../types/Todo'
 import Input from './todo-item-input/todo-item-input';
 import Button, { StyledButton } from './todo-item-button/todo-item-button';
-import { createPortal } from 'react-dom';
 import useOptionalPortal from './../../hooks/useOptionalPortal';
-
-
-const _draggablePortal = document.getElementById('draggable');
 
 const TextWrapper = styled.p`
 
@@ -111,11 +107,13 @@ const UnmemoizedTodoItem: React.FC<TodoItemProps> = ({ children, todo, index, to
     }, [index, updateTodoText])
 
     const portalize = useOptionalPortal(todo.id);
+    
 
-    return <Draggable draggableId={todo.id} index={index}>
+    return <Draggable draggableId={todo.id} key={todo.id} index={index}>
         {(provided, snapshot) => {
+            console.log(snapshot.draggingOver)
             return (
-                <>
+                <div>
                     {portalize(snapshot.isDragging, <Item
                         ref={provided.innerRef}
 
@@ -142,7 +140,7 @@ const UnmemoizedTodoItem: React.FC<TodoItemProps> = ({ children, todo, index, to
                             <Button onClick={todo.done ? onDone : toggleEdit} done={todo.done} />
                         </TextWrapper>
                     </Item>)}
-                </>
+                </div>
             );
         }}
     </Draggable>

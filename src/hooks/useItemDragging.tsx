@@ -33,9 +33,6 @@ const useItemDragging = (droppableID: string ) => {
         return unsubscribe;
     }, [droppableID, items, onDragEnd, publishItemMove, setItems])
 
-
-
-
     // Listens to the item moved event and adds it if appropriate
     React.useEffect(() => {
         const unsubscribe = onItemMoved(({ todo: item, result }) => {

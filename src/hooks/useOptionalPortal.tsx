@@ -6,8 +6,10 @@ const useOptionalPortal = (defaultKey: string = "") => {
     const portalLocation = React.useRef<HTMLElement>();
 
     React.useEffect(() => {
-        if (document.getElementById('draggable')) {
-            portalLocation.current = document.getElementById('draggable')!;
+        if (!portalLocation.current) {
+            if (document.getElementById('draggable')) {
+                portalLocation.current = document.getElementById('draggable')!;
+            }
         }
     }, [])
 
