@@ -7,6 +7,14 @@ import { ItemMoveObserverContextProvider } from '../../contexts/itemMoveObserver
 import CustomListsView from './custom-lists-view/custom-lists-view';
 import Layout from './../../components-style/layout';
 import blurAllInputs from './../../utils/blurAllInputs';
+import styled from '@emotion/styled';
+
+const DraggablePortal = styled.div`
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+`
 
 interface TodosPageProps {
 
@@ -25,7 +33,7 @@ const UnwrappedTodosPage: React.FC<TodosPageProps> = ({ }) => {
 
     return <Layout>
         <DragDropContext onDragStart={blurAllInputs} onDragEnd={onDragEnd}>
-
+            <DraggablePortal id="draggable" />
             <WeekView />
             <CustomListsView />
         </DragDropContext>

@@ -81,9 +81,7 @@ const InnerList = styled.ul`
 
 
 
-const getListStyle = (isDraggingOver: boolean) => ({
-    // background: isDraggingOver ? "lightblue" : "lightgrey",
-});
+
 
 interface TodoListProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     children?: React.ReactNode;
@@ -148,8 +146,20 @@ const UnwrappedTodoList = React.forwardRef<any, any>(({ headerEditingComponent, 
         }, droppableID)
     }, [addEventListenerOnItemRemoved, droppableID, removeTodo])
 
+    // const listOffset = React.useRef({ x: 0, y: 0 });
 
-    return <List className="todo__list-wrapper" {...props} ref={ref} isToday={isToday} isInThePast={isInThePast}>
+    // React.useEffect(() => {
+    //     const rect1 = document.getElementById(id)?.getBoundingClientRect();
+    //     const rect2 = document.querySelector('.todo__list-wrapper')?.getBoundingClientRect();
+    //     if (rect1 && rect2) {
+
+    //         const { y } = rect1;
+    //         const {x} = rect2
+    //         listOffset.current = { x, y };
+    //     }
+    // }, [])
+
+    return <List className="todo__list-wrapper" id={droppableID} {...props} ref={ref} isToday={isToday} isInThePast={isInThePast}>
         {/* Handle */}
         {children}
         {editable
@@ -161,10 +171,9 @@ const UnwrappedTodoList = React.forwardRef<any, any>(({ headerEditingComponent, 
                 <InnerList className="todo__list-inner"
                     {...provided.droppableProps}
                     ref={provided.innerRef}
-                    style={getListStyle(snapshot.isDraggingOver)}
                 >
                     {todos?.map((todo: Todo, i) =>
-                        <TodoItem remove={remove} updateTodoText={updateTodoText} toggleDone={toggleTodoDone} todo={todo} key={todo.id} index={i} />
+                        <TodoItem  remove={remove} updateTodoText={updateTodoText} toggleDone={toggleTodoDone} todo={todo} key={todo.id} index={i} />
                     )}
                     {provided.placeholder}
                     <AddTodoItem addNewItem={addNewItem} />

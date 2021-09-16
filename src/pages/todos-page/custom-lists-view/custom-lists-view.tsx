@@ -22,6 +22,10 @@ import { Droppable } from 'react-beautiful-dnd';
 import HandleIcon from '../../../assets/images/handle-icon';
 import { useDragObserverContext } from '../../../contexts/dragContext';
 import useMoveCustomLists from './useMoveCustomLists';
+import { createPortal } from 'react-dom';
+
+const _draggablePortal = document.getElementById('draggable');
+
 
 const BottomWrapperGrid = styled(MainWrapperGrid)`
     margin-top: 0;
@@ -196,6 +200,16 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
     }, [onDragEnd, subscribe])
 
     console.log(todoLists)
+
+    const portalize = (bool: boolean, key: string, children: React.ReactNode) => {
+        if (_draggablePortal && bool) {
+            return createPortal(children, _draggablePortal, key)
+        } else {
+            // console.warn("Unable to create portal in component todo item id:", todo.id)
+            return children;
+        }
+    }
+
     return <BottomWrapperGrid>
         <TopRibbon>
             <LeftJustifiedButton size='2em' onClick={toggleCustomLists}>
@@ -239,25 +253,24 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
 
                                         console.log({ leftOffset })
                                     }
-                                    return (
-                                        <TodoList
-                                            ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                            style={{
-                                                ...provided.draggableProps.style,
-                                                // position: snapshot.isDragging ? 'fixed' : 'unset'
-                                                top: 0,
-                                                left: leftOffset,
-                                            }}
-                                            editable id={v.docId} title={v.name} key={v.docId} customList
-                                        >
-                                            <TopBar>
-                                                <Handle {...provided.dragHandleProps}>
-                                                    <HandleIcon />
-                                                </Handle>
-                                            </TopBar>
-                                        </TodoList>
-                                    );
+                                    return <>{portalize(snapshot.isDragging, v.docId, <TodoList
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        style={{
+                                            ...provided.draggableProps.style,
+                                            // position: snapshot.isDragging ? 'fixed' : 'unset'
+                                            top: 0,
+                                            left: leftOffset,
+                                        }}
+                                        editable id={v.docId} title={v.name} key={v.docId} customList
+                                    >
+                                        <TopBar>
+                                            <Handle {...provided.dragHandleProps}>
+                                                <HandleIcon />
+                                            </Handle>
+                                        </TopBar>
+                                    </TodoList>)}</>
+
                                 }}
                             </Draggable>
                         )}
