@@ -21,8 +21,8 @@ import EditableHeader from './listHeader/editable-header';
 import useTodoListCallbacks from './useTodoListCallbacks';
 import useTodos from './useTodos';
 import useUpdateIndexes from './../../hooks/useUpdateIndexes';
-import useUpdateDbOnItemAdded from './../../hooks/useUpdateDbOnItemAdded';
-import useUpdateDbOnItemRemoved from './../../hooks/useUpdateDbOnItemRemoved';
+import { useItemMoveObserverContext } from '../../contexts/itemMoveObserverContext';
+import { useDragObserverContext } from '../../contexts/dragContext';
 
 
 const List = styled.div<{ isToday?: boolean, isInThePast?: boolean }>`
@@ -131,9 +131,22 @@ const UnwrappedTodoList = React.forwardRef<any, any>(({ headerEditingComponent, 
     useUpdateIndexes(updateTodo, droppableID)
 
     // Subscribes to drag actions and updates the db accordingly
-    useUpdateDbOnItemAdded(droppableID, createTodo);
-    useUpdateDbOnItemRemoved(droppableID, removeTodo);
+    const { subscribe: addEventListenerOnItemAdded } = useItemMoveObserverContext();
+    React.useEffect(() => {
+        return addEventListenerOnItemAdded((e) => {
+            const todo = e.todo;
+            if (!e.result.destination) return;
+            todo.index = e.result.destination.index;
+            createTodo(todo);
+        }, droppableID)
+    }, [addEventListenerOnItemAdded, createTodo, droppableID])
 
+    const { subscribe: addEventListenerOnItemRemoved } = useDragObserverContext();
+    React.useEffect(() => {
+        return addEventListenerOnItemRemoved((e) => {
+            removeTodo(e.draggableId);
+        }, droppableID)
+    }, [addEventListenerOnItemRemoved, droppableID, removeTodo])
 
 
     return <List className="todo__list-wrapper" {...props} ref={ref} isToday={isToday} isInThePast={isInThePast}>
