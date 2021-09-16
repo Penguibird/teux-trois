@@ -29,7 +29,6 @@ const Input: React.FC<InputProps> = ({ css = StyledInputCss, defaultValue = "", 
 
 
     const closeInput = () => {
-        console.log("Click outside")
         onTextChange(value);
         onTypingChange(false);
     }
@@ -45,7 +44,6 @@ const Input: React.FC<InputProps> = ({ css = StyledInputCss, defaultValue = "", 
             value={value}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setValue(e.target.value) }}
             onKeyPress={(e: React.KeyboardEvent) => {
-                console.log(e)
                 if (e.key === 'Enter') { closeInput() }
             }}
         />

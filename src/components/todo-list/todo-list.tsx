@@ -102,7 +102,7 @@ interface TodoListProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTM
 // Fetches no data just displays the thing
 const UnwrappedTodoList = React.forwardRef<any, any>(({ headerEditingComponent, editable, children, customList, datetime, todos: initialTodos = [], title, id, isToday, isInThePast, ...props }: TodoListProps, ref: React.LegacyRef<HTMLDivElement>) => {
     const droppableID = `droppable-${id}`;
-    console.log("Rerendering todo list", droppableID)
+    // console.log("Rerendering todo list", droppableID)
 
     const displayDate = React.useMemo(() => {
         if (!datetime)

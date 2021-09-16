@@ -44,7 +44,6 @@ const AddTodoItem: React.FC<AddTodoItemProps> = ({ focusOnRender, css = StyledIn
 
 
     const closeInput = React.useCallback(() => {
-        console.log("Click outside")
         if (text === "") return;
         setText('')
         addNewItem(text)
@@ -62,7 +61,6 @@ const AddTodoItem: React.FC<AddTodoItemProps> = ({ focusOnRender, css = StyledIn
             onChange={onChange}
             onClick={(e: React.MouseEvent) => e.stopPropagation()}
             onKeyPress={(e: React.KeyboardEvent) => {
-                console.log("Keypress inside an input", e)
                 if (e.key === 'Enter') { closeInput() }
             }}
         />

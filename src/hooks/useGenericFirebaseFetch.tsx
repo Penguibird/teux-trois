@@ -14,7 +14,7 @@ interface useGenericFIrebaseFetchProps {
 
 const useGenericFirebaseFetch = ({ getCollectionRef, outputCallback, collectionRef: propsCollectionRef }: useGenericFIrebaseFetchProps) => {
     const [loading, setLoading] = React.useState(true)
-    const [error, setError] = React.useState(null)
+    const [error, setError] = React.useState<any>(null)
 
 
     const collectionRef = React.useMemo<firestoreRef>(() => {
@@ -30,12 +30,11 @@ const useGenericFirebaseFetch = ({ getCollectionRef, outputCallback, collectionR
     React.useEffect(() => {
         async function fetchData() {
 
-            console.log("Fetching dataaaa")
+            // console.log("Fetching dataaaa")
             if (!collectionRef) return;
             try {
                 const data = await collectionRef
                     .get();
-                console.log(data.docs.map(_ => _.data()))
                 setLoading(false);
                 outputCallback(data)
 

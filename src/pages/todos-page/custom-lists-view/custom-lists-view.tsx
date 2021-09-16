@@ -23,6 +23,7 @@ import HandleIcon from '../../../assets/images/handle-icon';
 import { useDragObserverContext } from '../../../contexts/dragContext';
 import useMoveCustomLists from './useMoveCustomLists';
 import { createPortal } from 'react-dom';
+import useOptionalPortal from './../../../hooks/useOptionalPortal';
 
 const _draggablePortal = document.getElementById('draggable');
 
@@ -176,7 +177,6 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
 
 
     const onDragEnd = React.useCallback((result: DropResult,) => {
-        console.log(result)
         if (result.destination) {
 
             const [item] = todoLists.splice(result.source.index, 1);
@@ -199,16 +199,8 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
         return unsubscribe;
     }, [onDragEnd, subscribe])
 
-    console.log(todoLists)
 
-    const portalize = (bool: boolean, key: string, children: React.ReactNode) => {
-        if (_draggablePortal && bool) {
-            return createPortal(children, _draggablePortal, key)
-        } else {
-            // console.warn("Unable to create portal in component todo item id:", todo.id)
-            return children;
-        }
-    }
+    const portalize = useOptionalPortal();
 
     return <BottomWrapperGrid>
         <TopRibbon>
@@ -250,10 +242,8 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
                                     if (snapshot.isDragging) {
                                         //@ts-ignore
                                         leftOffset = `calc(${provided.draggableProps.style.left}px - 5rem)`;
-
-                                        console.log({ leftOffset })
                                     }
-                                    return <>{portalize(snapshot.isDragging, v.docId, <TodoList
+                                    return <>{portalize(snapshot.isDragging, <TodoList
                                         ref={provided.innerRef}
                                         {...provided.draggableProps}
                                         style={{
@@ -269,7 +259,7 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
                                                 <HandleIcon />
                                             </Handle>
                                         </TopBar>
-                                    </TodoList>)}</>
+                                    </TodoList>, v.docId)}</>
 
                                 }}
                             </Draggable>

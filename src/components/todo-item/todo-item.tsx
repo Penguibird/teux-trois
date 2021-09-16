@@ -2,12 +2,13 @@ import * as React from 'react';
 //import {Fragment, useState, useEffect} from 'react';
 import styled from '@emotion/styled';
 import { colors } from '../../style/themes/colors';
-import { Draggable, DraggableProvided, DraggableStateSnapshot, DraggingStyle, } from 'react-beautiful-dnd';
+import { Draggable } from 'react-beautiful-dnd';
 
 import Todo from '../../types/Todo'
 import Input from './todo-item-input/todo-item-input';
 import Button, { StyledButton } from './todo-item-button/todo-item-button';
 import { createPortal } from 'react-dom';
+import useOptionalPortal from './../../hooks/useOptionalPortal';
 
 
 const _draggablePortal = document.getElementById('draggable');
@@ -109,21 +110,15 @@ const UnmemoizedTodoItem: React.FC<TodoItemProps> = ({ children, todo, index, to
         updateTodoText(index, text);
     }, [index, updateTodoText])
 
-    const portalize = (bool: boolean, children: React.ReactNode) => {
-        if (_draggablePortal && bool) {
-            return createPortal(children, _draggablePortal, todo.id)
-        } else {
-            // console.warn("Unable to create portal in component todo item id:", todo.id)
-            return children;
-        }
-    }
+    const portalize = useOptionalPortal(todo.id);
 
     return <Draggable draggableId={todo.id} index={index}>
         {(provided, snapshot) => {
             return (
-                <div   >
+                <>
                     {portalize(snapshot.isDragging, <Item
                         ref={provided.innerRef}
+
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                         style={{
@@ -147,7 +142,7 @@ const UnmemoizedTodoItem: React.FC<TodoItemProps> = ({ children, todo, index, to
                             <Button onClick={todo.done ? onDone : toggleEdit} done={todo.done} />
                         </TextWrapper>
                     </Item>)}
-                </div>
+                </>
             );
         }}
     </Draggable>

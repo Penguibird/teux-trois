@@ -19,7 +19,6 @@ const useMoveCarousel = (days: any[], setDays?: React.Dispatch<React.SetStateAct
             const newDays: number[] = (new Array(5)).fill(undefined)
                 .map((_, i) => days[0] - (i + 1) * DAYINMILIS)
                 .reverse();
-            console.log(newDays)
             setDays([...newDays, ...days]);
         } else {
             setLeftShift(prevVal => prevVal + 5)
@@ -38,7 +37,6 @@ const useMoveCarousel = (days: any[], setDays?: React.Dispatch<React.SetStateAct
         if (leftShift <= -(days.length - 9) && setDays) {
             const newDays: number[] = (new Array(5)).fill(undefined)
                 .map((_, i) => days[days.length - 1] + (i + 1) * DAYINMILIS)
-            console.log(newDays)
             setDays([...days, ...newDays]);
         }
         setLeftShift((prevValue) => prevValue - 5);
@@ -48,7 +46,6 @@ const useMoveCarousel = (days: any[], setDays?: React.Dispatch<React.SetStateAct
     const onToday = React.useCallback((e: React.MouseEvent) => {
         if (mondayOfThisWeek) {
             const indexOfToday = days.indexOf(mondayOfThisWeek);
-            console.log({ mondayOfThisWeek, indexOfToday, days })
             setLeftShift(-indexOfToday)
         }
     }, [days, mondayOfThisWeek]);

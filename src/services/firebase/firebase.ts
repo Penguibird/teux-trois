@@ -1,7 +1,7 @@
 import firebase from "firebase";
 // require('dotenv').config();
 
-console.log(process.env)
+// console.log(process.env)
 let firebaseInstance = firebase.initializeApp({
     apiKey: 'AIzaSyAv7MEECvK3oDxvXKPwkwAaMm26q8uoBbM',
     authDomain: "teux-trois.firebaseapp.com",

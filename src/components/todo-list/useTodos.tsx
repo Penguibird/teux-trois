@@ -46,7 +46,8 @@ function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
     }
 
     const removeTodo = async (id: Todo["id"]) => {
-        await collectionRef?.doc(id).delete().then(console.log).catch(console.log);
+        await collectionRef?.doc(id).delete()
+        // .then(console.log).catch(console.log);
     }
     return { loading, error, updateTodo, createTodo, removeTodo }
 }
