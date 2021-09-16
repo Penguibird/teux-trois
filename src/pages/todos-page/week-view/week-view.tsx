@@ -36,7 +36,7 @@ const TodoListGrid = styled.div<{ leftShift?: string }>`
     transition: transform 0.15s ease-in-out;
 
     & > * {
-        flex: 1 1 0;
+        /* flex: 1 1 0; */
     }
 `
 const ShiftingButton = styled(Button) <ButtonProps>`

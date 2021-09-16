@@ -203,7 +203,7 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
             </LeftJustifiedButton>
             <DotsList>
                 {todoLists.map((v, i) => <StyledLi key={i}>
-                    <Dot as="button" onClick={move.target(i )} />
+                    <Dot as="button" onClick={move.target(i)} />
                     <Label>{v.name}</Label>
                 </StyledLi>)}
             </DotsList>
@@ -222,7 +222,7 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
                     </Button>
                 </>}
             </SideBar>
-            <Droppable type="CUSTOMLISTS" droppableId="CUSTOMLISTS">
+            <Droppable type="CUSTOMLISTS" droppableId="CUSTOMLISTS" direction='horizontal'>
                 {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) =>
                     <TodoListGrid
                         {...provided.droppableProps}
@@ -231,23 +231,34 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
                     >
                         {todoLists.map((v, i) =>
                             <Draggable key={v.docId} draggableId={v.docId} index={i}>
-                                {(provided, snapshot) => (
-                                    <TodoList
-                                        ref={provided.innerRef}
-                                        {...provided.draggableProps}
-                                        style={{
-                                            ...provided.draggableProps.style,
-                                            position: 'static'
-                                        }}
-                                        editable id={v.docId} title={v.name} key={v.docId} customList
-                                    >
-                                        <TopBar>
-                                            <Handle {...provided.dragHandleProps} >
-                                                <HandleIcon />
-                                            </Handle>
-                                        </TopBar>
-                                    </TodoList>
-                                )}
+                                {(provided, snapshot) => {
+                                    let leftOffset;
+                                    if (snapshot.isDragging) {
+                                        //@ts-ignore
+                                        leftOffset = `calc(${provided.draggableProps.style.left}px - 5rem)`;
+
+                                        console.log({ leftOffset })
+                                    }
+                                    return (
+                                        <TodoList
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            style={{
+                                                ...provided.draggableProps.style,
+                                                // position: snapshot.isDragging ? 'fixed' : 'unset'
+                                                top: 0,
+                                                left: leftOffset,
+                                            }}
+                                            editable id={v.docId} title={v.name} key={v.docId} customList
+                                        >
+                                            <TopBar>
+                                                <Handle {...provided.dragHandleProps}>
+                                                    <HandleIcon />
+                                                </Handle>
+                                            </TopBar>
+                                        </TodoList>
+                                    );
+                                }}
                             </Draggable>
                         )}
                         {provided.placeholder}
