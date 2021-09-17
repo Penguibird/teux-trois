@@ -1,5 +1,6 @@
 module.exports = {
     colors: {
+        white: '#fff',
         background: '#fff',
         borderGray: '#ebebeb',
         ribbonBackgroundGray: '#e6e6e6',

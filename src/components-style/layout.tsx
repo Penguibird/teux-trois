@@ -5,11 +5,14 @@ import Footer from './page-footer';
 
 interface LayoutProps {
     children?: React.ReactNode
+    header?: React.ReactNode
 };
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({ children, header }) => {
     return <>
-        <Header />
+        <Header>
+            {header}
+        </Header>
         <main>
             {children}
         </main>

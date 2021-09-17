@@ -40,7 +40,7 @@ const Login: React.FC<LoginProps> = ({ }) => {
 
     return <div>
         <div id="firebaseui-auth-container"></div>
-        <div id="loader">Loading...</div>
+        {/* <div id="loader">Loading...</div> */}
     </div>
 }
 

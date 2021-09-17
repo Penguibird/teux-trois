@@ -26,25 +26,29 @@ import CrossIcon from './../../../assets/images/cross-icon';
 import { TopBar } from './../../../components-style/list-topbar';
 
 
-const Handle = styled(UnstyledButton)`
-    height: 1em;
-    grid-column: 2 / span 1;
-        place-self: center;
+const IconButton = styled(UnstyledButton)`
+    width: min-content;
     svg {
         height: 100%;
     }
+    &:hover {
+        svg {
+            fill: ${colors.primaryColorLighter};
+        }
+    }
+`
+
+const Handle = styled(IconButton)`
+    height: 1.3em;
+    grid-column: 2 / span 1;
+    place-self: center;
+
 `;
 
-
-
-
-const DeleteButton = styled(UnstyledButton)`
+const DeleteButton = styled(IconButton)`
     grid-column: 1 / span 1;
     place-self: left;
-    height: 1em;
-    svg {
-        height: 100%;
-    }
+    height: 1.3em;
 `
 
 
@@ -154,7 +158,7 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
 
     const { collectionRef } = useCustomLists();
 
-    const { leftShift, move, showLeftButtons, showRightButtons } = useMoveCustomLists(todoLists);
+    const { leftShift, move, showLeftButtons, showRightButtons, } = useMoveCustomLists(todoLists);
 
     const [showCustomLists, setShowCustomLists] = React.useState(true);
     const toggleCustomLists = React.useCallback(() => {
@@ -164,8 +168,9 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
 
     const [addingTodoList, setAddingTodoList] = React.useState(false);
     const startAddingNewList = React.useCallback(() => {
+        move.makeSpaceForNewList();
         setAddingTodoList(true)
-    }, [])
+    }, [move])
 
     const onAddNewItem = React.useCallback((t: string) => {
         if (!setTodoLists) return;
@@ -191,6 +196,7 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
         collectionRef.doc(todoLists[i].docId).delete();
         todoLists.splice(i, 1);
         setTodoLists([...todoLists]);
+        if (leftShift !== 0) move.oneLeft();
     }
 
     const onDragEnd = React.useCallback((result: DropResult,) => {

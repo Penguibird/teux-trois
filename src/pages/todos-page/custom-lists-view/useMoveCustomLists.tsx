@@ -38,10 +38,18 @@ const useMoveCustomLists = (todoLists: TodoList[]) => {
                     return - (todoLists.length - 5);
                 return i;
             })
+        },
+        makeSpaceForNewList: () => {
+            setLeftShift(- (todoLists.length - 4))
         }
     }
     const showLeftButtons = React.useMemo(() => leftShift !== 0, [leftShift]);
-    const showRightButtons = React.useMemo(() => leftShift !== - (todoLists.length - 5), [leftShift, todoLists.length]);
+    const showRightButtons = React.useMemo(() => {
+        if (todoLists.length <= 5)
+            return false;
+
+        return leftShift !== -(todoLists.length - 5);
+    }, [leftShift, todoLists.length]);
 
     return { leftShift, move, showLeftButtons, showRightButtons };
 }
