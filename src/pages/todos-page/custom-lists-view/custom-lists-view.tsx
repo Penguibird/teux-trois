@@ -17,7 +17,7 @@ import { v4 } from 'uuid';
 import { TodoList as TodoListType } from '../../../types/TodoList'
 import { TodoListsContextProvider, useTodoListsContext } from './context';
 import { useCustomLists } from './useCustomLists';
-import { DroppableProvided, DroppableStateSnapshot, DropResult, Draggable } from 'react-beautiful-dnd';
+import { DroppableProvided, DroppableStateSnapshot, DropResult, Draggable, DraggableProvided, DraggableStateSnapshot, DraggableRubric } from 'react-beautiful-dnd';
 import { Droppable } from 'react-beautiful-dnd';
 import HandleIcon from '../../../assets/images/handle-icon';
 import { useDragObserverContext } from '../../../contexts/dragContext';
@@ -198,7 +198,7 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
     }, [onDragEnd, subscribe])
 
 
-    const portalize = useOptionalPortal();
+    // const portalize = useOptionalPortal();
 
     return <BottomWrapperGrid>
         <TopRibbon>
@@ -226,7 +226,12 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
                     </Button>
                 </>}
             </SideBar>
-            <Droppable type="CUSTOMLISTS" droppableId="CUSTOMLISTS" direction='horizontal'>
+            <Droppable
+                renderClone={generateTodoList(todoLists)}
+                type="CUSTOMLISTS"
+                droppableId="CUSTOMLISTS"
+                direction='horizontal'
+            >
                 {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) =>
                     <TodoListGrid
                         {...provided.droppableProps}
@@ -235,28 +240,7 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
                     >
                         {todoLists.map((v, i) =>
                             <Draggable key={v.docId} draggableId={v.docId} index={i}>
-                                {(provided, snapshot) => <>
-                                    {portalize(snapshot.isDragging,
-                                        <TodoList
-                                            ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                            style={{
-                                                ...provided.draggableProps.style,
-                                            }}
-                                            editable
-                                            customList
-                                            id={v.docId}
-                                            title={v.name}
-                                            key={v.docId}
-                                        >
-                                            <TopBar>
-                                                <Handle {...provided.dragHandleProps}>
-                                                    <HandleIcon />
-                                                </Handle>
-                                            </TopBar>
-                                        </TodoList>, v.docId)
-                                    }
-                                </>}
+                                {generateTodoList(todoLists)}
                             </Draggable>
                         )}
                         {provided.placeholder}
@@ -291,3 +275,28 @@ const CustomListsView = (props: CustomListsViewProps) => {
 }
 
 export default CustomListsView;
+
+function generateTodoList(todoLists: TodoListType[]) {
+    return (provided: DraggableProvided, snapshot: DraggableStateSnapshot, rubric: DraggableRubric) => {
+        const v = todoLists[rubric.source.index];
+        return <TodoList
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            style={{
+                ...provided.draggableProps.style,
+            }}
+            editable
+            customList
+            id={v.docId}
+            title={v.name}
+            key={v.docId}
+        >
+            <TopBar>
+                <Handle {...provided.dragHandleProps}>
+                    <HandleIcon />
+                </Handle>
+            </TopBar>
+        </TodoList>;
+    };
+}
+
