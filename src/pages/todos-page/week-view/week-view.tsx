@@ -21,7 +21,6 @@ const MainWrapperGrid = styled.div`
     grid-template-columns: ${variables.sideBarWidth} calc(100vw - (${variables.sideBarWidth} * 2)) ${variables.sideBarWidth};
     overflow: hidden;
     margin-top: 80px;
-
 `
 const TodoListGrid = styled.div<{ leftShift?: string }>`
     height: 40vh;

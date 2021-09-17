@@ -8,7 +8,6 @@ import DoubleArrowIcon from '../../../assets/images/double-arrow-icon';
 import styled from '@emotion/styled';
 import { colors, variables } from '../../../style/themes/colors';
 import PlusIcon from '../../../assets/images/plus-icon';
-import UnstyledButton from '../../../components-style/unstyledButton';
 import AddTodoList from '../../../components/todo-list/add-todo-list';
 import { headerCss } from '../../../components/todo-list/listHeader/header';
 import AddTodoItem from '../../../components/add-todo-item/add-todo-item';
@@ -22,8 +21,31 @@ import { Droppable } from 'react-beautiful-dnd';
 import HandleIcon from '../../../assets/images/handle-icon';
 import { useDragObserverContext } from '../../../contexts/dragContext';
 import useMoveCustomLists from './useMoveCustomLists';
-import useOptionalPortal from './../../../hooks/useOptionalPortal';
+import UnstyledButton from './../../../components-style/unstyledButton';
+import CrossIcon from './../../../assets/images/cross-icon';
+import { TopBar } from './../../../components-style/list-topbar';
 
+
+const Handle = styled(UnstyledButton)`
+    height: 1em;
+    grid-column: 2 / span 1;
+        place-self: center;
+    svg {
+        height: 100%;
+    }
+`;
+
+
+
+
+const DeleteButton = styled(UnstyledButton)`
+    grid-column: 1 / span 1;
+    place-self: left;
+    height: 1em;
+    svg {
+        height: 100%;
+    }
+`
 
 
 const BottomWrapperGrid = styled(MainWrapperGrid)`
@@ -125,14 +147,6 @@ interface CustomListsViewProps {
 
 };
 
-const Handle = styled(UnstyledButton)`
-    height: 1em;
-    svg {
-        height: 100%;
-    }
-`;
-const TopBar = styled.div``;
-
 const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
     const ctx = useTodoListsContext();
     const { setTodoLists } = ctx
@@ -173,6 +187,11 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
         setAddingTodoList(false);
     }, [])
 
+    const removeTodoList = (i: number) => () => {
+        collectionRef.doc(todoLists[i].docId).delete();
+        todoLists.splice(i, 1);
+        setTodoLists([...todoLists]);
+    }
 
     const onDragEnd = React.useCallback((result: DropResult,) => {
         if (result.destination) {
@@ -198,7 +217,7 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
     }, [onDragEnd, subscribe])
 
 
-    // const portalize = useOptionalPortal();
+
 
     return <BottomWrapperGrid>
         <TopRibbon>
@@ -227,7 +246,7 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
                 </>}
             </SideBar>
             <Droppable
-                renderClone={generateTodoList(todoLists)}
+                renderClone={generateTodoList(todoLists, removeTodoList)}
                 type="CUSTOMLISTS"
                 droppableId="CUSTOMLISTS"
                 direction='horizontal'
@@ -240,7 +259,7 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
                     >
                         {todoLists.map((v, i) =>
                             <Draggable key={v.docId} draggableId={v.docId} index={i}>
-                                {generateTodoList(todoLists)}
+                                {generateTodoList(todoLists, removeTodoList)}
                             </Draggable>
                         )}
                         {provided.placeholder}
@@ -276,7 +295,8 @@ const CustomListsView = (props: CustomListsViewProps) => {
 
 export default CustomListsView;
 
-function generateTodoList(todoLists: TodoListType[]) {
+
+function generateTodoList(todoLists: TodoListType[], removeTodoList: (i: number) => () => void) {
     return (provided: DraggableProvided, snapshot: DraggableStateSnapshot, rubric: DraggableRubric) => {
         const v = todoLists[rubric.source.index];
         return <TodoList
@@ -292,6 +312,9 @@ function generateTodoList(todoLists: TodoListType[]) {
             key={v.docId}
         >
             <TopBar>
+                <DeleteButton onClick={removeTodoList(rubric.source.index)}>
+                    <CrossIcon />
+                </DeleteButton>
                 <Handle {...provided.dragHandleProps}>
                     <HandleIcon />
                 </Handle>
@@ -299,4 +322,3 @@ function generateTodoList(todoLists: TodoListType[]) {
         </TodoList>;
     };
 }
-

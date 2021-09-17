@@ -23,6 +23,7 @@ import useTodos from './useTodos';
 import useUpdateIndexes from './../../hooks/useUpdateIndexes';
 import { useItemMoveObserverContext } from '../../contexts/itemMoveObserverContext';
 import { useDragObserverContext } from '../../contexts/dragContext';
+import { TopBar } from './../../components-style/list-topbar';
 
 
 const List = styled.div<{ isToday?: boolean, isInThePast?: boolean }>`
@@ -57,6 +58,15 @@ const List = styled.div<{ isToday?: boolean, isInThePast?: boolean }>`
             color: ${colors.dark};
         }
     `}
+
+    ${TopBar} {
+        visibility: hidden;
+    }
+    &:hover {
+        ${TopBar} {
+            visibility: visible;
+        }
+    }
     
 `
 
