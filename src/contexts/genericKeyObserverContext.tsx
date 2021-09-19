@@ -27,7 +27,7 @@ function generateObserverContext<T>() {
 
         const publish = (e: MyEvent<T>, targetID: string) => {
             // if (!result.destination) return;
-            console.log({ e, targetID, listeners, }, listeners[targetID])
+            // console.log({ e, targetID, listeners, }, listeners[targetID])
             listeners[targetID]?.forEach(f => f?.(e))
         }
         return { subscribe, publish }

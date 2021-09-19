@@ -38,7 +38,7 @@ const IconButton = styled(UnstyledButton)`
     }
 `
 
-const Handle = styled(IconButton)`
+export const Handle = styled(IconButton)`
     height: 1.3em;
     grid-column: 2 / span 1;
     place-self: center;

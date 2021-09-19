@@ -111,7 +111,7 @@ const UnmemoizedTodoItem: React.FC<TodoItemProps> = ({ children, todo, index, to
 
     return <Draggable draggableId={todo.id} key={todo.id} index={index}>
         {(provided, snapshot) => {
-            console.log(`Dragging todo "${todo.text}" over ${snapshot.draggingOver}`)
+            // console.log(`Dragging todo "${todo.text}" over ${snapshot.draggingOver}`)
             return (
                 <div>
                     {portalize(snapshot.isDragging, <Item

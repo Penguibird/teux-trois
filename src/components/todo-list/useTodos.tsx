@@ -29,7 +29,9 @@ function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
     )
 
     const outputCallback = React.useCallback(
-        (data: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => { setTodos(data.docs.map(_ => _.data()) as unknown as Todo[]) },
+        (data: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => {
+            setTodos(data.docs.map(_ => _.data()) as unknown as Todo[])
+        },
         [setTodos]
     )
     const { loading, error } = useGenericFirebaseFetch({

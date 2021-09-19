@@ -9,6 +9,8 @@ import { variables } from '../../../style/themes/colors';
 import HomeIcon from '../../../assets/images/home-icon';
 import useMoveCarousel from './useMoveCarousel';
 import { SideBar, Button, ButtonProps } from '../../../components-style/sidebar/sidebar';
+import { useUserPreferences } from '../../../contexts/userPreferences';
+import { UserPreferences } from './../../../types/UserPreferences';
 
 
 interface WeekViewProps {
@@ -50,9 +52,10 @@ const UnwrappedWeekView: React.FC<WeekViewProps> = ({ }) => {
         today: -1,
         daysOfTheWeek: [] as number[],
     })
+    const { userPreferences } = useUserPreferences();
     if (dateObjects.current.today === -1) {
         // console.log("New date being calculated")
-        dateObjects.current = getDateObjectsForTheCurrentWeek();
+        dateObjects.current = getDateObjectsForTheCurrentWeek(userPreferences.weekListBehavior);
     }
     const { daysOfTheWeek, mondayOfThisWeek, today } = dateObjects.current;
 
@@ -105,11 +108,20 @@ const getWeekDayIndexFromDateTimeNumber = (day: number) => {
     return weekDayIndex === -1 ? 6 : weekDayIndex;
 };
 
-const getDateObjectsForTheCurrentWeek = () => {
+const getDateObjectsForTheCurrentWeek = (behavior: UserPreferences['weekListBehavior']) => {
     const date = new Date();
     const today = Date.now();
     const dayOfTheWeek = date.getDay();
-    const mondayOfThisWeek = today - ((dayOfTheWeek - 1) * DAYINMILIS);
+
+    let mondayOfThisWeek: number;
+    if (behavior === 'startAtMonday') {
+        mondayOfThisWeek = today - ((dayOfTheWeek - 1) * DAYINMILIS);
+    } else if (behavior === 'startAtYesterday') {
+        mondayOfThisWeek = today - (1 * DAYINMILIS);
+    } else {
+        // if (behavior === 'startAtToday') 
+        mondayOfThisWeek = today;
+    }
     const daysOfTheWeek: number[] = (new Array(5)).fill(undefined).map((v, i) => (mondayOfThisWeek + (DAYINMILIS * i)));
     return { today, mondayOfThisWeek, daysOfTheWeek }
 }

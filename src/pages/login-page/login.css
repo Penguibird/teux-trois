@@ -1,0 +1,35 @@
+.firebaseui-idp-button {
+    background: none;
+    border: 2px var(--border-color, gray) solid;
+    border-radius: 4px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    padding: 1em 1.5em;
+    margin-top: 1.5em;
+    
+    cursor: pointer;
+    transition: background-color .2s ease-in-out;
+}
+
+.firebaseui-idp-button:hover {
+    background-color: var(--border-color, gray) !important;
+}
+
+.firebaseui-idp-button img {
+    height: 3em;   
+    margin: 1em;
+}
+
+.firebaseui-idp-text {
+    font-family: 'inter';
+    font-size: 1rem;
+    font-weight: 600;
+    margin-right: 1em;
+}
+
+.firebaseui-idp-text.firebaseui-idp-text-short {
+    display: none;
+}

@@ -1,10 +1,13 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 
+import './login.css';
+
 import firebase from 'firebase';
 import * as firebaseui from 'firebaseui';
-import firebaseInstance from '../../../../services/firebase/firebase';
-import { useUserContext } from '../../../../contexts/userContext';
+import firebaseInstance from '../../services/firebase/firebase';
+import { useUserContext } from '../../contexts/userContext';
+import colors from '../../style/themes/colors';
 
 interface LoginProps {
 
@@ -38,8 +41,10 @@ const Login: React.FC<LoginProps> = ({ }) => {
 
     }, [])
 
+    const style = {"--border-color": colors.colors.borderGray}  as React.CSSProperties;
+
     return <div>
-        <div id="firebaseui-auth-container"></div>
+        <div style={style} id="firebaseui-auth-container"></div>
         {/* <div id="loader">Loading...</div> */}
     </div>
 }
