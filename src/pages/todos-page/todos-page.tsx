@@ -14,6 +14,7 @@ import firebaseInstance from '../../services/firebase/firebase';
 import { css } from '@emotion/css';
 import colors from '../../style/themes/colors';
 import UnstyledButton from './../../components-style/unstyledButton';
+import { FirestoreProvider } from './../../contexts/useFirestore';
 
 const DraggablePortal = styled.div`
     pointer-events: none;
@@ -97,11 +98,13 @@ const UnwrappedTodosPage: React.FC<TodosPageProps> = ({ }) => {
 }
 
 const TodosPage = (props: TodosPageProps) => {
-    return <ItemMoveObserverContextProvider>
-        <DragObserverContextProvider>
-            <UnwrappedTodosPage {...props} />
-        </DragObserverContextProvider>
-    </ItemMoveObserverContextProvider>
+    return <FirestoreProvider>
+        <ItemMoveObserverContextProvider>
+            <DragObserverContextProvider>
+                <UnwrappedTodosPage {...props} />
+            </DragObserverContextProvider>
+        </ItemMoveObserverContextProvider>
+    </FirestoreProvider>
 }
 
 export default TodosPage;

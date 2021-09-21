@@ -1,19 +1,18 @@
 import * as React from 'react'
 import { useUserContext } from '../../contexts/userContext';
-import firebaseInstance from '../../services/firebase/firebase';
 import Todo from '../../types/Todo';
 import { useTodoContext } from './context';
 import firebase from 'firebase';
 import useGenericFirebaseFetch from '../../hooks/useGenericFirebaseFetch';
+import { useFirestore } from '../../contexts/useFirestore';
 
 function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
 
     const user = useUserContext();
     const { setTodos } = useTodoContext();
 
+    const db = useFirestore();
     const collectionRef = React.useMemo<firebase.firestore.CollectionReference<firebase.firestore.DocumentData>>(() => {
-        const db = firebaseInstance.firestore();
-
         return db
             .collection('users')
             .doc(user.user?.uid)
@@ -21,7 +20,7 @@ function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
             .doc(id)
             .collection('items')
 
-    }, [id, todosCollection, user.user?.uid]);
+    }, [db, id, todosCollection, user.user?.uid]);
 
     const orderedCollectionRef = React.useMemo(
         () => collectionRef.orderBy("index"),
