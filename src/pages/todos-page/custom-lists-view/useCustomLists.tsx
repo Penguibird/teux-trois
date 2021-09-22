@@ -40,6 +40,7 @@ export const useCustomLists = () => {
     const { } = useGenericFirebaseFetch({
         outputCallback,
         collectionRef: orderedCollectionRef,
+        subscribe: true,
     })
 
     return {collectionRef}

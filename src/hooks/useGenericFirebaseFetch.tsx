@@ -10,9 +10,10 @@ interface useGenericFIrebaseFetchProps {
     outputCallback: (data: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => void
     collectionRef?: firestoreRef
     getCollectionRef?: (db: firebase.firestore.Firestore) => firestoreRef
+    subscribe?: boolean
 }
 
-const useGenericFirebaseFetch = ({ getCollectionRef, outputCallback, collectionRef: propsCollectionRef }: useGenericFIrebaseFetchProps) => {
+const useGenericFirebaseFetch = ({ getCollectionRef, outputCallback, collectionRef: propsCollectionRef, subscribe: doSubscription }: useGenericFIrebaseFetchProps) => {
     const [loading, setLoading] = React.useState(true)
     const [error, setError] = React.useState<any>(null)
 
@@ -35,6 +36,7 @@ const useGenericFirebaseFetch = ({ getCollectionRef, outputCallback, collectionR
             // console.log("Fetching dataaaa")
             if (!collectionRef) return;
             try {
+
                 const data = await collectionRef
                     .get();
                 setLoading(false);
@@ -49,6 +51,15 @@ const useGenericFirebaseFetch = ({ getCollectionRef, outputCallback, collectionR
         fetchData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    React.useEffect(() => {
+        if (doSubscription) {
+            return collectionRef.onSnapshot({
+                next: outputCallback,
+                error: (e: firebase.firestore.FirestoreError) => { console.error(`Error ${e.code} ${e.name} ${e.message}`) }
+            })
+        }
+    }, [collectionRef, doSubscription, outputCallback])
 
     return { loading, error, collectionRef }
 }
