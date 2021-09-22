@@ -1,18 +1,18 @@
 
-import firebaseInstance from '../../../services/firebase/firebase';
 import * as React from 'react';
 import firebase from 'firebase';
 import { TodoList } from '../../../types/TodoList';
 import useGenericFirebaseFetch from '../../../hooks/useGenericFirebaseFetch';
 import { useUserContext } from '../../../contexts/userContext';
 import { useTodoListsContext } from './context';
+import { useFirestore } from '../../../contexts/useFirestore';
 
 export const useCustomLists = () => {
     const user = useUserContext();
     
     const { setTodoLists } = useTodoListsContext();
     
-    const db = firebaseInstance.firestore();
+    const db = useFirestore();
     const collectionRef = React.useMemo(
         () => db
             .collection('users')

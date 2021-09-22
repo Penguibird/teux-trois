@@ -1,7 +1,7 @@
 
-import firebaseInstance from './../services/firebase/firebase';
 import firebase from 'firebase';
 import * as React from 'react';
+import { useFirestore } from '../contexts/useFirestore';
 
 
 type firestoreRef = firebase.firestore.Query<firebase.firestore.DocumentData>
@@ -17,15 +17,17 @@ const useGenericFirebaseFetch = ({ getCollectionRef, outputCallback, collectionR
     const [error, setError] = React.useState<any>(null)
 
 
+    const db = useFirestore();
     const collectionRef = React.useMemo<firestoreRef>(() => {
         if (getCollectionRef) {
-            const db = firebaseInstance.firestore();
             const collectionRef = getCollectionRef(db);
             return collectionRef;
         } else {
             return propsCollectionRef!;
         }
-    }, [getCollectionRef, propsCollectionRef])
+    }, [db, getCollectionRef, propsCollectionRef])
+
+    // const collectionRef = propsCollectionRef
 
     React.useEffect(() => {
         async function fetchData() {
@@ -48,7 +50,7 @@ const useGenericFirebaseFetch = ({ getCollectionRef, outputCallback, collectionR
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    return { loading, error }
+    return { loading, error, collectionRef }
 }
 
 export default useGenericFirebaseFetch
