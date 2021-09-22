@@ -90,9 +90,6 @@ const InnerList = styled.ul`
 `;
 
 
-
-
-
 interface TodoListProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     children?: React.ReactNode;
     todos?: Todo[]

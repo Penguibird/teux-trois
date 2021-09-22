@@ -6,11 +6,25 @@ import firebase from 'firebase';
 const FirestoreContext = React.createContext<firebase.firestore.Firestore | null>(null);
 
 export const FirestoreProvider = ({ children }: { children: React.ReactNode }) => {
-    const db = firebaseInstance.firestore();
+    const [loading, setLoading] = React.useState(true)
+    const db = React.useRef<firebase.firestore.Firestore | null>(null);
+
+    React.useEffect(() => {
+        (async function fetch() {
+            const firestore = firebaseInstance.firestore();
+            await firestore.enablePersistence();
+            db.current = firestore;
+            setLoading(false)
+        })()
+    }, [])
 
 
-    return <FirestoreContext.Provider value={db}>
-        {children}
+
+    return <FirestoreContext.Provider value={db.current}>
+        {loading
+            ? 'loading'
+            : children
+        }
     </FirestoreContext.Provider>
 }
 

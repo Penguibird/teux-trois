@@ -34,7 +34,7 @@ function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
         [setTodos]
     )
     const { loading, error } = useGenericFirebaseFetch({
-        collectionRef: orderedCollectionRef, outputCallback
+        collectionRef: orderedCollectionRef, outputCallback, subscribe: true
     })
 
 
