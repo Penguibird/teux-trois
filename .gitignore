@@ -28,3 +28,6 @@ yarn-error.log*
 
 # vscode workspace settings
 .vscode
+
+firebase-debug.log
+.firebase
