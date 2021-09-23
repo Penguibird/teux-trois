@@ -82,6 +82,7 @@
     "@storybook/react": "^6.3.6",
     "@types/react-helmet": "^6.1.2",
     "@types/uuid": "^8.3.1",
-    "@types/webpack-merge": "^5.0.0"
+    "@types/webpack-merge": "^5.0.0",
+    "workbox-webpack-plugin": "^6.3.0"
   }
 }

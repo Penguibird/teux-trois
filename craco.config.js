@@ -1,4 +1,5 @@
 const { resolve } = require("path");
+const WorkboxPlugin = require('workbox-webpack-plugin');
 
 module.exports = {
     reactScriptsVersion: "react-scripts" /* (default value) */,
@@ -11,11 +12,16 @@ module.exports = {
             "@emotion/babel-plugin"
         ]
     },
-    
-    // webpack: {
-    //     // mode: 'extends',
-    //     alias: {
-    //         '@': resolve(__dirname, 'src')
-    //     }
-    // }
+
+    webpack: {
+        mode: 'extends',
+        plugins: [
+            new WorkboxPlugin.GenerateSW({
+                // these options encourage the ServiceWorkers to get in there fast
+                // and not allow any straggling "old" SWs to hang around
+                clientsClaim: true,
+                skipWaiting: true,
+            }),
+        ],
+    }
 }

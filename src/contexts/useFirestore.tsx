@@ -12,7 +12,11 @@ export const FirestoreProvider = ({ children }: { children: React.ReactNode }) =
     React.useEffect(() => {
         (async function fetch() {
             const firestore = firebaseInstance.firestore();
-            await firestore.enablePersistence();
+            try {
+                await firestore.enablePersistence();
+            } catch (error) {
+                console.error(error)
+            }
             db.current = firestore;
             setLoading(false)
         })()

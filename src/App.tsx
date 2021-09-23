@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { UserContextProvider } from './contexts/userContext';
-import Router from './router';
+import Router from './components/router';
 import './style/main.css'
 
 interface AppProps {
