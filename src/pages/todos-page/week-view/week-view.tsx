@@ -11,6 +11,8 @@ import useMoveCarousel from './useMoveCarousel';
 import { SideBar, Button, ButtonProps } from '../../../components-style/sidebar/sidebar';
 import { useUserPreferences } from '../../../contexts/userPreferences';
 import { UserPreferences } from './../../../types/UserPreferences';
+import { useNumberOfListsInRowQuery } from '../../../hooks/useNumberOfListsInRowQuery';
+import { useRef } from 'react';
 
 
 interface WeekViewProps {
@@ -53,9 +55,10 @@ const UnwrappedWeekView: React.FC<WeekViewProps> = ({ }) => {
         daysOfTheWeek: [] as number[],
     })
     const { userPreferences } = useUserPreferences();
+    const number = useNumberOfListsInRowQuery({});
     if (dateObjects.current.today === -1) {
         // console.log("New date being calculated")
-        dateObjects.current = getDateObjectsForTheCurrentWeek(userPreferences.weekListBehavior);
+        dateObjects.current = getDateObjectsForTheCurrentWeek(userPreferences.weekListBehavior, number);
     }
     const { daysOfTheWeek, mondayOfThisWeek, today } = dateObjects.current;
 
@@ -63,10 +66,23 @@ const UnwrappedWeekView: React.FC<WeekViewProps> = ({ }) => {
 
 
     // All the callbacks for moving the carousel
-    const { leftShift, onToday, move } = useMoveCarousel(days, setDays, mondayOfThisWeek);
+    const { leftShift, onToday, move } = useMoveCarousel(days, setDays, mondayOfThisWeek, number);
 
     // Gets the value for the transform css function from the leftShift state
 
+    const numberRef = useRef(number)
+    React.useEffect(() => {
+        if (numberRef.current !== number) {
+            numberRef.current = number;
+            onToday?.();
+            for (let i = days.indexOf(today); i < number; i++) {
+                if (!days[i]) {
+                    days[i] = (i - days.indexOf(today)) * DAYINMILIS + today;
+                }
+            }
+            setDays([...days])
+        }
+    }, [days, number, onToday, today])
 
     return <MainWrapperGrid>
         <SideBar left>
@@ -108,7 +124,9 @@ const getWeekDayIndexFromDateTimeNumber = (day: number) => {
     return weekDayIndex === -1 ? 6 : weekDayIndex;
 };
 
-const getDateObjectsForTheCurrentWeek = (behavior: UserPreferences['weekListBehavior']) => {
+const getDateObjectsForTheCurrentWeek = (behavior: UserPreferences['weekListBehavior'], number: number) => {
+    if (number < 5)
+        behavior = 'startAtToday';
     const date = new Date();
     const today = Date.now();
     const dayOfTheWeek = date.getDay();
@@ -122,7 +140,7 @@ const getDateObjectsForTheCurrentWeek = (behavior: UserPreferences['weekListBeha
         // if (behavior === 'startAtToday') 
         mondayOfThisWeek = today;
     }
-    const daysOfTheWeek: number[] = (new Array(5)).fill(undefined).map((v, i) => (mondayOfThisWeek + (DAYINMILIS * i)));
+    const daysOfTheWeek: number[] = (new Array(number)).fill(undefined).map((v, i) => (mondayOfThisWeek + (DAYINMILIS * i)));
     return { today, mondayOfThisWeek, daysOfTheWeek }
 }
 

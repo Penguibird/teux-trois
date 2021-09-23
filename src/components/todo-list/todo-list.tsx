@@ -24,16 +24,17 @@ import useUpdateIndexes from './../../hooks/useUpdateIndexes';
 import { useItemMoveObserverContext } from '../../contexts/itemMoveObserverContext';
 import { useDragObserverContext } from '../../contexts/dragContext';
 import { TopBar } from './../../components-style/list-topbar';
+import { useNumberOfListsInRowQuery } from '../../hooks/useNumberOfListsInRowQuery';
 
 
-const List = styled.div<{ isToday?: boolean, isInThePast?: boolean }>`
+const List = styled.div<{ isToday?: boolean, isInThePast?: boolean, numberOfLists?: number }>`
     box-sizing: border-box;    
     display: flex;
     align-items: center;
     justify-content: flex-start;
     flex-direction: column;
     padding: 0em 1em;
-    width: calc((100vw - (${variables.sideBarWidth}) * 2) / 5);
+    width: calc((100vw - (${variables.sideBarWidth}) * 2) / ${props => props.numberOfLists});
     * + & {
         border-left: ${colors.borderGray} ${variables.borderWidth} solid;
     }
@@ -153,7 +154,9 @@ const UnwrappedTodoList = React.forwardRef<any, any>(({ headerEditingComponent, 
         }, droppableID)
     }, [addEventListenerOnItemRemoved, droppableID, removeTodo])
 
-    return <List className="todo__list-wrapper" id={droppableID} {...props} ref={ref} isToday={isToday} isInThePast={isInThePast}>
+    const numberOfLists = useNumberOfListsInRowQuery({});
+
+    return <List className="todo__list-wrapper" id={droppableID} {...props} ref={ref} isToday={isToday} isInThePast={isInThePast} numberOfLists={numberOfLists}>
         {/* Handle */}
         {children}
         {editable

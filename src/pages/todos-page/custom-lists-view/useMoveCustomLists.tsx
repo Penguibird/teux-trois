@@ -2,7 +2,7 @@
 import * as React from 'react';
 import type { TodoList } from '../../../types/TodoList';
 
-const useMoveCustomLists = (todoLists: TodoList[]) => {
+const useMoveCustomLists = (todoLists: TodoList[], numberOfLists = 5) => {
     const [leftShift, setLeftShift] = React.useState(0);
 
     const move = {
@@ -14,8 +14,8 @@ const useMoveCustomLists = (todoLists: TodoList[]) => {
         },
         fiveLeft: () => {
             setLeftShift(n => {
-                if (n > 5) {
-                    return n + 5
+                if (n > numberOfLists) {
+                    return n + numberOfLists
                 } else {
                     return 0
                 }
@@ -23,19 +23,19 @@ const useMoveCustomLists = (todoLists: TodoList[]) => {
         },
         fiveRight: () => {
             setLeftShift(n => {
-                if (n > -(todoLists.length - 5 - 5)) {
-                    return n - 5
+                if (n > -(todoLists.length - numberOfLists - numberOfLists)) {
+                    return n - numberOfLists
                 } else {
-                    return -(todoLists.length - 5)
+                    return -(todoLists.length - numberOfLists)
                 }
             })
         },
         target: (i: number) => () => {
             setLeftShift(n => {
-                if (i < 5)
+                if (i < numberOfLists)
                     return 0;
-                if (i > - (todoLists.length - 5))
-                    return - (todoLists.length - 5);
+                if (i > - (todoLists.length - numberOfLists))
+                    return - (todoLists.length - numberOfLists);
                 return i;
             })
         },
@@ -45,11 +45,11 @@ const useMoveCustomLists = (todoLists: TodoList[]) => {
     }
     const showLeftButtons = React.useMemo(() => leftShift !== 0, [leftShift]);
     const showRightButtons = React.useMemo(() => {
-        if (todoLists.length <= 5)
+        if (todoLists.length <= numberOfLists)
             return false;
 
-        return leftShift !== -(todoLists.length - 5);
-    }, [leftShift, todoLists.length]);
+        return leftShift !== -(todoLists.length - numberOfLists);
+    }, [leftShift, numberOfLists, todoLists.length]);
 
     return { leftShift, move, showLeftButtons, showRightButtons };
 }

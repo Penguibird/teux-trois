@@ -98,13 +98,15 @@ const UnwrappedTodosPage: React.FC<TodosPageProps> = ({ }) => {
 }
 
 const TodosPage = (props: TodosPageProps) => {
-    return <FirestoreProvider>
-        <ItemMoveObserverContextProvider>
-            <DragObserverContextProvider>
-                <UnwrappedTodosPage {...props} />
-            </DragObserverContextProvider>
-        </ItemMoveObserverContextProvider>
-    </FirestoreProvider>
+    return <>
+        <FirestoreProvider>
+            <ItemMoveObserverContextProvider>
+                <DragObserverContextProvider>
+                    <UnwrappedTodosPage {...props} />
+                </DragObserverContextProvider>
+            </ItemMoveObserverContextProvider>
+        </FirestoreProvider>
+    </>
 }
 
 export default TodosPage;

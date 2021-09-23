@@ -24,6 +24,7 @@ import useMoveCustomLists from './useMoveCustomLists';
 import UnstyledButton from './../../../components-style/unstyledButton';
 import CrossIcon from './../../../assets/images/cross-icon';
 import { TopBar } from './../../../components-style/list-topbar';
+import { useNumberOfListsInRowQuery } from '../../../hooks/useNumberOfListsInRowQuery';
 
 
 const IconButton = styled(UnstyledButton)`
@@ -152,19 +153,22 @@ interface CustomListsViewProps {
 };
 
 const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
+
+    
     const ctx = useTodoListsContext();
     const { setTodoLists } = ctx
     const todoLists = ctx.todoLists as TodoListType[];
-
+    
     const { collectionRef } = useCustomLists();
-
-    const { leftShift, move, showLeftButtons, showRightButtons, } = useMoveCustomLists(todoLists);
-
+    
+    const numberOfLists = useNumberOfListsInRowQuery({});
+    const { leftShift, move, showLeftButtons, showRightButtons, } = useMoveCustomLists(todoLists, numberOfLists);
+    
     const [showCustomLists, setShowCustomLists] = React.useState(true);
     const toggleCustomLists = React.useCallback(() => {
         setShowCustomLists(prevVal => !prevVal);
     }, [])
-
+    
 
     const [addingTodoList, setAddingTodoList] = React.useState(false);
     const startAddingNewList = React.useCallback(() => {
