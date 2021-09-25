@@ -131,7 +131,7 @@ const UnwrappedTodoList = React.forwardRef<any, any>(({ headerEditingComponent, 
     const { toggleTodoDone, remove, updateTodoText, addNewItem } = useTodoListCallbacks({ updateTodo, createTodo, removeTodo });
 
     // Takes care of any item dragging/dropping logic
-    useItemDragging(droppableID)
+    useItemDragging(droppableID, removeTodo)
 
     // Updates the items order after dragging
     useUpdateIndexes(updateTodo, droppableID)
@@ -150,7 +150,9 @@ const UnwrappedTodoList = React.forwardRef<any, any>(({ headerEditingComponent, 
     const { subscribe: addEventListenerOnItemRemoved } = useDragObserverContext();
     React.useEffect(() => {
         return addEventListenerOnItemRemoved((e) => {
-            removeTodo(e.draggableId);
+            if (e.destination?.droppableId !== e.source.droppableId) {
+                removeTodo(e.draggableId);
+            }
         }, droppableID)
     }, [addEventListenerOnItemRemoved, droppableID, removeTodo])
 

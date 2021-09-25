@@ -37,7 +37,8 @@
     "eject": "craco eject",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
-    "lint": "eslint src --cache"
+    "lint": "eslint src --cache",
+    "deploy": "npm run build && firebase deploy"
   },
   "browserslist": {
     "production": [

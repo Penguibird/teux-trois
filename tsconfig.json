@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "types": ["@emotion/core"],
+    "types": [
+      "@emotion/core"
+    ],
     "target": "es5",
     "lib": [
       "dom",
@@ -19,7 +21,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "downlevelIteration": true
   },
   "include": [

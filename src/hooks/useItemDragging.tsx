@@ -9,7 +9,7 @@ import { useTodoContext } from '../components/todo-list/context';
  * @param setItems the items state
  * 
  */
-const useItemDragging = (droppableID: string ) => {
+const useItemDragging = (droppableID: string, removeTodo: (id: string) => void) => {
     const { todos: items, setTodos: setItems } = useTodoContext();
 
     const { subscribe: onDragEnd } = useDragObserverContext();
@@ -26,12 +26,13 @@ const useItemDragging = (droppableID: string ) => {
             if (result.source.droppableId === droppableID) {
                 const removedItem = items.splice(result.source.index, 1)[0];
                 publishItemMove({ todo: removedItem, result }, result.destination.droppableId);
+                // removeTodo(removedItem.id);
                 setItems([...items])
             }
 
         }, droppableID)
         return unsubscribe;
-    }, [droppableID, items, onDragEnd, publishItemMove, setItems])
+    }, [droppableID, items, onDragEnd, publishItemMove, removeTodo, setItems])
 
     // Listens to the item moved event and adds it if appropriate
     React.useEffect(() => {

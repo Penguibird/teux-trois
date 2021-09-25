@@ -28,6 +28,7 @@ interface ItemProps {
 }
 
 const Item = styled.div<ItemProps>`
+    height: max-content;
     width: 100%;
     margin: .1rem 0 .1666666667rem 0;
     padding: 0.15rem;
