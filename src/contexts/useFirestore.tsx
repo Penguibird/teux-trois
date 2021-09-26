@@ -10,16 +10,22 @@ export const FirestoreProvider = ({ children }: { children: React.ReactNode }) =
     const db = React.useRef<firebase.firestore.Firestore | null>(null);
 
     React.useEffect(() => {
-        (async function fetch() {
-            const firestore = firebaseInstance.firestore();
-            try {
-                await firestore.enablePersistence();
-            } catch (error) {
-                console.error(error)
-            }
-            db.current = firestore;
-            setLoading(false)
-        })()
+        if (!db.current) {
+            (async function fetch() {
+                const firestore = firebaseInstance.firestore();
+                try {
+                    if (window.location.hostname === "localhost") {
+                        console.log("Connecting to Firestore emulator");
+                        firestore.useEmulator("localhost", 8080);
+                    }
+                    await firestore.enablePersistence();
+                } catch (error) {
+                    console.error(error)
+                }
+                db.current = firestore;
+                setLoading(false)
+            })()
+        }
     }, [])
 
 

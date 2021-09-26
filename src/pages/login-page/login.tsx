@@ -14,6 +14,10 @@ interface LoginProps {
 };
 
 const auth = firebaseInstance.auth()
+if (window.location.hostname === "localhost") {
+    console.log("Connecting to authentication emulatore")
+    auth.useEmulator("https://localhost:9099");
+}
 var ui = new firebaseui.auth.AuthUI(auth);
 
 const Login: React.FC<LoginProps> = ({ }) => {
@@ -41,7 +45,7 @@ const Login: React.FC<LoginProps> = ({ }) => {
 
     }, [])
 
-    const style = {"--border-color": colors.colors.borderGray}  as React.CSSProperties;
+    const style = { "--border-color": colors.colors.borderGray } as React.CSSProperties;
 
     return <div>
         <div style={style} id="firebaseui-auth-container"></div>

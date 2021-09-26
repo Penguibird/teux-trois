@@ -55,7 +55,10 @@ const useGenericFirebaseFetch = ({ getCollectionRef, outputCallback, collectionR
     React.useEffect(() => {
         if (doSubscription) {
             return collectionRef.onSnapshot({
-                next: outputCallback,
+                next: (snapshot: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => {
+                    console.log(snapshot)
+                    outputCallback(snapshot);
+                },
                 error: (e: firebase.firestore.FirestoreError) => { console.error(`Error ${e.code} ${e.name} ${e.message}`) }
             })
         }

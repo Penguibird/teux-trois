@@ -10,7 +10,7 @@ import Button, { StyledButton } from './todo-item-button/todo-item-button';
 import useOptionalPortal from './../../hooks/useOptionalPortal';
 
 const TextWrapper = styled.p`
-
+    position: relative;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -108,13 +108,13 @@ const UnmemoizedTodoItem: React.FC<TodoItemProps> = ({ children, todo, index, to
     }, [index, updateTodoText])
 
     const portalize = useOptionalPortal(todo.id);
-    
+
 
     return <Draggable draggableId={todo.id} key={todo.id} index={index}>
         {(provided, snapshot) => {
             // console.log(`Dragging todo "${todo.text}" over ${snapshot.draggingOver}`)
             return (
-                <div>
+                <div >
                     {portalize(snapshot.isDragging, <Item
                         ref={provided.innerRef}
 
@@ -144,7 +144,7 @@ const UnmemoizedTodoItem: React.FC<TodoItemProps> = ({ children, todo, index, to
                 </div>
             );
         }}
-    </Draggable>
+    </Draggable >
 }
 
 const TodoItem = React.memo(UnmemoizedTodoItem);
