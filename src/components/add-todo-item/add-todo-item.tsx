@@ -45,10 +45,15 @@ const AddTodoItem: React.FC<AddTodoItemProps> = React.forwardRef(({ focusOnRende
 
 
     const closeInput = React.useCallback(() => {
-        if (text === "") return;
+        if (text === "") {
+            if (onCancel) onCancel();
+            return;
+        }
         setText('')
         addNewItem(text)
-    }, [addNewItem, text])
+
+
+    }, [addNewItem, onCancel, text])
 
 
     return <React.Fragment>
