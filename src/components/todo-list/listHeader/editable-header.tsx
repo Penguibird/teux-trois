@@ -8,10 +8,17 @@ import styled from '@emotion/styled';
 import { useUserContext } from '../../../contexts/userContext';
 import firebase from 'firebase';
 import { useFirestore } from '../../../contexts/useFirestore';
+import { css } from '@emotion/react';
 
 
 const HeaderButton = styled(styled(UnstyledButton)(headerCss))`
     cursor: text;
+`
+
+const inputCss = css`
+    ${headerCss};
+    border: none;
+    padding: 0;
 `
 
 interface EditableHeaderProps {
@@ -35,7 +42,7 @@ const EditableHeader: React.FC<EditableHeaderProps> = ({ title, id }) => {
             .collection('customTodos')
             .doc(id)
     }, [db, id, user.user?.uid]);
-    
+
     const updateText = React.useCallback((text: string) => {
         documentRef.update({ name: text });
     }, [documentRef])
@@ -59,7 +66,7 @@ const EditableHeader: React.FC<EditableHeaderProps> = ({ title, id }) => {
 
     return <>
         {editing
-            ? <Input css={headerCss} onTextChange={changeTodoText} onTypingChange={onTypingChange} defaultValue={title} />
+            ? <Input css={inputCss} onTextChange={changeTodoText} onTypingChange={onTypingChange} defaultValue={title} />
             : <HeaderButton onClick={setEditingTrue} >{title}</HeaderButton>}
     </>
 }
