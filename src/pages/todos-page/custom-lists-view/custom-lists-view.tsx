@@ -25,6 +25,7 @@ import UnstyledButton from './../../../components-style/unstyledButton';
 import CrossIcon from './../../../assets/images/cross-icon';
 import { TopBar } from './../../../components-style/list-topbar';
 import { useNumberOfListsInRowQuery } from '../../../hooks/useNumberOfListsInRowQuery';
+import { css } from '@emotion/react';
 
 
 const IconButton = styled(UnstyledButton)`
@@ -157,17 +158,17 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
     const ctx = useTodoListsContext();
     const { setTodoLists } = ctx
     const todoLists = ctx.todoLists as TodoListType[];
-    
+
     const { collectionRef } = useCustomLists();
-    
+
     const numberOfLists = useNumberOfListsInRowQuery({});
     const { leftShift, move, showLeftButtons, showRightButtons, } = useMoveCustomLists(todoLists, numberOfLists);
-    
+
     const [showCustomLists, setShowCustomLists] = React.useState(true);
     const toggleCustomLists = React.useCallback(() => {
         setShowCustomLists(prevVal => !prevVal);
     }, [])
-    
+
 
     const [addingTodoList, setAddingTodoList] = React.useState(false);
     const startAddingNewList = React.useCallback(() => {
@@ -274,7 +275,15 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
                         )}
                         {provided.placeholder}
                         {addingTodoList && <AddTodoList>
-                            <AddTodoItem focusOnRender css={headerCss} addNewItem={onAddNewItem} onCancel={onCancelAddTodoList} />
+                            <AddTodoItem
+                                focusOnRender
+                                css={css`
+                                    ${headerCss};
+                                    margin: -2px;
+                                `}
+                                addNewItem={onAddNewItem}
+                                onCancel={onCancelAddTodoList}
+                            />
                         </AddTodoList>}
                     </TodoListGrid>
                 }
