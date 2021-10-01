@@ -8,15 +8,15 @@ type firestoreRef = firebase.firestore.Query<firebase.firestore.DocumentData>
 
 interface useGenericFIrebaseFetchProps {
     outputCallback: (data: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => void
+    subscribeCallback?: (data: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => void
     collectionRef?: firestoreRef
     getCollectionRef?: (db: firebase.firestore.Firestore) => firestoreRef
     subscribe?: boolean
 }
 
-const useGenericFirebaseFetch = ({ getCollectionRef, outputCallback, collectionRef: propsCollectionRef, subscribe: doSubscription }: useGenericFIrebaseFetchProps) => {
+const useGenericFirebaseFetch = ({ getCollectionRef, outputCallback, subscribeCallback, collectionRef: propsCollectionRef, subscribe: doSubscription }: useGenericFIrebaseFetchProps) => {
     const [loading, setLoading] = React.useState(true)
     const [error, setError] = React.useState<any>(null)
-
 
     const db = useFirestore();
     const collectionRef = React.useMemo<firestoreRef>(() => {
@@ -36,7 +36,6 @@ const useGenericFirebaseFetch = ({ getCollectionRef, outputCallback, collectionR
             // console.log("Fetching dataaaa")
             if (!collectionRef) return;
             try {
-
                 const data = await collectionRef
                     .get();
                 setLoading(false);
@@ -53,16 +52,23 @@ const useGenericFirebaseFetch = ({ getCollectionRef, outputCallback, collectionR
     }, [])
 
     React.useEffect(() => {
-        if (doSubscription) {
+        if (doSubscription || subscribeCallback) {
+            console.log("Testing INSIDE")
+
             return collectionRef.onSnapshot({
                 next: (snapshot: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => {
-                    console.log(snapshot)
-                    outputCallback(snapshot);
+                    // console.log(snapshot.docChanges(), snapshot.query)
+
+                    if (subscribeCallback) {
+                        subscribeCallback(snapshot);
+                    } else {
+                        outputCallback(snapshot);
+                    }
                 },
-                error: (e: firebase.firestore.FirestoreError) => { console.error(`Error ${e.code} ${e.name} ${e.message}`) }
+                error: (e: firebase.firestore.FirestoreError) => { console.error(`Firebase error ${e.code} ${e.name} ${e.message}`) }
             })
         }
-    }, [collectionRef, doSubscription, outputCallback])
+    }, [])
 
     return { loading, error, collectionRef }
 }

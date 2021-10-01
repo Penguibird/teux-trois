@@ -18,7 +18,7 @@ ReactDOM.render(
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
 
-if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator && !window.location.hostname === 'localhost') {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js').then(registration => {
       console.log('SW registered: ', registration);

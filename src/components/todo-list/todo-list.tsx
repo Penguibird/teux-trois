@@ -10,7 +10,6 @@ import Header from './listHeader/header';
 
 import { colors, variables } from '../../style/themes/colors.js'
 import Todo from '../../types/Todo'
-import useItemDragging from '../../hooks/useItemDragging';
 
 import { MONTHNAMES } from '../../utils/dateHelpers'
 
@@ -20,7 +19,6 @@ import compareObjects from './../../utils/compareObjects';
 import EditableHeader from './listHeader/editable-header';
 import useTodoListCallbacks from './useTodoListCallbacks';
 import useTodos from './useTodos';
-import useUpdateIndexes from './../../hooks/useUpdateIndexes';
 import { useItemMoveObserverContext } from '../../contexts/itemMoveObserverContext';
 import { useDragObserverContext } from '../../contexts/dragContext';
 import { TopBar } from './../../components-style/list-topbar';
@@ -122,42 +120,63 @@ const UnwrappedTodoList = React.forwardRef<any, any>(({ headerEditingComponent, 
     }, [datetime])
 
 
-    const { todos } = useTodoContext();
+    const { todos, setTodos } = useTodoContext();
 
     //Fetches todos
-    const { updateTodo, createTodo, removeTodo } = useTodos(id, customList ? 'customTodos' : 'todos');
+    const { updateTodo, createTodo, removeTodo, updateTodoListIndexes } = useTodos(id, customList ? 'customTodos' : 'todos');
 
     // Creates all the callbacks for the TodoItem
     const { toggleTodoDone, remove, updateTodoText, addNewItem } = useTodoListCallbacks({ updateTodo, createTodo, removeTodo });
 
-    // Takes care of any item dragging/dropping logic
-    useItemDragging(droppableID, removeTodo)
+    const { subscribe: addEventListenerOnItemRemoved } = useDragObserverContext();
+    const { subscribe: addEventListenerOnItemAdded, publish: publishItemMove } = useItemMoveObserverContext();
 
-    // Updates the items order after dragging
-    useUpdateIndexes(updateTodo, droppableID)
-
-    // Subscribes to drag actions and updates the db accordingly
-    const { subscribe: addEventListenerOnItemAdded } = useItemMoveObserverContext();
     React.useEffect(() => {
-        return addEventListenerOnItemAdded((e) => {
-            const todo = e.todo;
+        const unsubscribe = addEventListenerOnItemRemoved((result) => {
+            if (!result.destination) {
+                return;
+            }
+
+            if (result.source.droppableId === droppableID) {
+                const removedItem = todos.splice(result.source.index, 1)[0];
+                publishItemMove({ todo: removedItem, result }, result.destination.droppableId);
+                setTodos([...todos])
+            }
+
+            if (result.destination!.droppableId === droppableID || result.source.droppableId === droppableID) {
+                updateTodoListIndexes();
+            }
+            if (result.destination!.droppableId !== result.source.droppableId) {
+                removeTodo(result.draggableId);
+            }
+
+        }, droppableID)
+        return unsubscribe;
+    }, [droppableID, todos, addEventListenerOnItemRemoved, publishItemMove, removeTodo, setTodos, updateTodoListIndexes])
+
+
+    React.useEffect(() => {
+        const unsubscribe = addEventListenerOnItemAdded((e) => {
             if (!e.result.destination) return;
+            if (e.result.destination.droppableId === droppableID || e.result.source.droppableId === droppableID) {
+                updateTodoListIndexes();
+            }
+
+            const todo = e.todo;
             todo.index = e.result.destination.index;
+            todos.splice(e.result.destination.index, 0, e.todo);
+            setTodos([...todos])
+
             createTodo(todo);
         }, droppableID)
-    }, [addEventListenerOnItemAdded, createTodo, droppableID])
-
-    const { subscribe: addEventListenerOnItemRemoved } = useDragObserverContext();
-    React.useEffect(() => {
-        return addEventListenerOnItemRemoved((e) => {
-            if (e.destination?.droppableId !== e.source.droppableId) {
-                removeTodo(e.draggableId);
-            }
-        }, droppableID)
-    }, [addEventListenerOnItemRemoved, droppableID, removeTodo])
+        return unsubscribe
+    }, [addEventListenerOnItemAdded, createTodo, droppableID, setTodos, todos, updateTodoListIndexes])
 
     const numberOfLists = useNumberOfListsInRowQuery({});
 
+
+
+    // console.log("Rendering todo list", title, todos)
     return <List className="todo__list-wrapper" id={droppableID} {...props} ref={ref} isToday={isToday} isInThePast={isInThePast} numberOfLists={numberOfLists}>
         {/* Handle */}
         {children}
@@ -165,14 +184,14 @@ const UnwrappedTodoList = React.forwardRef<any, any>(({ headerEditingComponent, 
             ? <EditableHeader id={id} title={title} />
             : <Header>{title}</Header>}
         {(datetime) && <DateText className="todo__list-date">{displayDate}</DateText>}
-        <Droppable droppableId={droppableID} type="TODOLIST"  >
+        <Droppable droppableId={droppableID} type="TODOLIST" key={droppableID} >
             {(provided, snapshot) => (
                 <InnerList className="todo__list-inner"
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                 >
                     {todos?.map((todo: Todo, i) =>
-                        <TodoItem remove={remove} updateTodoText={updateTodoText} toggleDone={toggleTodoDone} todo={todo} key={todo.id} index={i} />
+                        <TodoItem remove={remove} parentId={droppableID} updateTodoText={updateTodoText} toggleDone={toggleTodoDone} todo={todo} key={todo.id} index={i} />
                     )}
                     {provided.placeholder}
                     <AddTodoItem addNewItem={addNewItem} />

@@ -69,6 +69,7 @@ const Item = styled.div<ItemProps>`
 interface TodoItemProps {
     children?: React.ReactText
     done?: boolean
+    parentId?: string
     todo: Todo
     index: number
     // parentContainerOffset: {
@@ -81,7 +82,7 @@ interface TodoItemProps {
     editingInitialValue?: boolean
 };
 
-const UnmemoizedTodoItem: React.FC<TodoItemProps> = ({ children, todo, index, toggleDone, remove, updateTodoText, editingInitialValue = false }) => {
+const UnmemoizedTodoItem: React.FC<TodoItemProps> = ({ children, todo, parentId, index, toggleDone, remove, updateTodoText, editingInitialValue = false }) => {
 
     const [editing, setEditing] = React.useState(editingInitialValue)
 
@@ -107,47 +108,49 @@ const UnmemoizedTodoItem: React.FC<TodoItemProps> = ({ children, todo, index, to
         updateTodoText(index, text);
     }, [index, updateTodoText])
 
+    const key = todo.id
+    // const key = parentId + todo.id
     const portalize = useOptionalPortal(todo.id);
+    // console.log("Rendering todo item", todo.text, key)
+    return <Draggable
+        draggableId={todo.id}
 
-
-    return <Draggable draggableId={todo.id} key={todo.id} index={index}>
+        // draggableId={index+""}
+        key={key} index={index}>
         {(provided, snapshot) => {
             // console.log(`Dragging todo "${todo.text}" over ${snapshot.draggingOver}`)
-            return (
-                <div >
-                    {portalize(snapshot.isDragging, <Item
-                        ref={provided.innerRef}
-
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={{
-                            ...provided.draggableProps.style,
-                            // position: 'static',
-                        }}
-                        className="todo-item"
-                        isDragging={snapshot.isDragging}
-                        editing={editing}
-                        done={todo.done}
-                        onClick={onClick}
-                        onDoubleClick={onDoubleClick}
-                    >
-                        <TextWrapper>
-                            {!editing
-                                ? todo.text
-                                : <Input
-                                    defaultValue={todo.text}
-                                    onTextChange={onTextChange}
-                                    onTypingChange={setEditing} />}
-                            <Button onClick={todo.done ? onDone : toggleEdit} done={todo.done} />
-                        </TextWrapper>
-                    </Item>)}
-                </div>
+            return (portalize(snapshot.isDragging, <Item
+                ref={provided.innerRef}
+                key={key}                         {...provided.draggableProps}
+                {...provided.dragHandleProps}
+                style={{
+                    ...provided.draggableProps.style,
+                    // position: 'static',
+                }}
+                className="todo-item"
+                isDragging={snapshot.isDragging}
+                editing={editing}
+                done={todo.done}
+                onClick={onClick}
+                onDoubleClick={onDoubleClick}
+            >
+                <TextWrapper>
+                    {!editing
+                        ? todo.text
+                        : <Input
+                            defaultValue={todo.text}
+                            onTextChange={onTextChange}
+                            onTypingChange={setEditing} />}
+                    <Button onClick={todo.done ? onDone : toggleEdit} done={todo.done} />
+                </TextWrapper>
+            </Item>) as React.ReactElement<HTMLElement, string | React.JSXElementConstructor<any>>
             );
         }}
     </Draggable >
 }
 
 const TodoItem = React.memo(UnmemoizedTodoItem);
+// const TodoItem = UnmemoizedTodoItem;
 
 export default TodoItem;
 export { Item };

@@ -16,7 +16,7 @@ interface LoginProps {
 const auth = firebaseInstance.auth()
 if (window.location.hostname === "localhost") {
     console.log("Connecting to authentication emulatore")
-    auth.useEmulator("https://localhost:9099");
+    auth.useEmulator("http://localhost:9099");
 }
 var ui = new firebaseui.auth.AuthUI(auth);
 
