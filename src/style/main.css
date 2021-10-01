@@ -3,7 +3,7 @@
 @font-face {
     font-family: "alternate-gothic";
     font-display: swap;
-    src: url('../assets\\fonts\\Alternate Gothic No1 D Regular\\Alternate Gothic No1 D Regular.otf');
+    src: url('..\\assets\\fonts\\Alternate Gothic No1 D Regular\\Alternate Gothic No1 D Regular.otf');
     font-weight: normal;
 }
 
