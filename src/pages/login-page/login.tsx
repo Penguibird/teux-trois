@@ -15,7 +15,7 @@ interface LoginProps {
 
 const auth = firebaseInstance.auth()
 if (window.location.hostname === "localhost") {
-    console.log("Connecting to authentication emulatore")
+    console.log("Connecting to authentication emulator on port ", 9099)
     auth.useEmulator("http://localhost:9099");
 }
 var ui = new firebaseui.auth.AuthUI(auth);
@@ -28,7 +28,6 @@ const Login: React.FC<LoginProps> = ({ }) => {
         if (!user || !setUser)
             return;
         setUser(user)
-        // console.log(user)
     })
 
     useEffect(() => {

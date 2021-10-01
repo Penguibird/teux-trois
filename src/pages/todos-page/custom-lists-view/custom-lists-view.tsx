@@ -154,7 +154,6 @@ interface CustomListsViewProps {
 
 const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
 
-    
     const ctx = useTodoListsContext();
     const { setTodoLists } = ctx
     const todoLists = ctx.todoLists as TodoListType[];
@@ -228,6 +227,7 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
 
 
 
+    // console.log(leftShift)
 
     return <BottomWrapperGrid>
         <TopRibbon>

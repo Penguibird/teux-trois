@@ -43,7 +43,7 @@ function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
 
     const subscribeCallback = React.useCallback((data: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => {
         data.docChanges().forEach((v) => {
-            console.log(id, v.type, v.doc)
+            // console.log(id, v.type, v.doc)
             const todo: Todo = v.doc.data() as any as Todo;
             if (v.type === 'added') {
                 setTodos((todos: Todo[]) => {
@@ -87,9 +87,8 @@ function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
     }
 
     const removeTodo = async (id: Todo["id"]) => {
-        console.log("Removing todo", id)
+        // console.log("Removing todo", id)
         await collectionRef?.doc(id).delete()
-            .then((a) => console.log("Removed todo: ", a))
             .catch(console.error);
     }
 

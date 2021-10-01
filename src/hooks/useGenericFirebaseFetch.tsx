@@ -33,7 +33,6 @@ const useGenericFirebaseFetch = ({ getCollectionRef, outputCallback, subscribeCa
     React.useEffect(() => {
         async function fetchData() {
 
-            // console.log("Fetching dataaaa")
             if (!collectionRef) return;
             try {
                 const data = await collectionRef
@@ -53,7 +52,6 @@ const useGenericFirebaseFetch = ({ getCollectionRef, outputCallback, subscribeCa
 
     React.useEffect(() => {
         if (doSubscription || subscribeCallback) {
-            console.log("Testing INSIDE")
 
             return collectionRef.onSnapshot({
                 next: (snapshot: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => {
@@ -68,6 +66,7 @@ const useGenericFirebaseFetch = ({ getCollectionRef, outputCallback, subscribeCa
                 error: (e: firebase.firestore.FirestoreError) => { console.error(`Firebase error ${e.code} ${e.name} ${e.message}`) }
             })
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return { loading, error, collectionRef }

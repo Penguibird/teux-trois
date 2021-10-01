@@ -15,7 +15,7 @@ export const FirestoreProvider = ({ children }: { children: React.ReactNode }) =
                 const firestore = firebaseInstance.firestore();
                 try {
                     if (window.location.hostname === "localhost") {
-                        console.log("Connecting to Firestore emulator");
+                        console.log("Connecting to Firestore emulator on port ", 8080);
                         firestore.useEmulator("localhost", 8080);
                     }
                     await firestore.enablePersistence();
