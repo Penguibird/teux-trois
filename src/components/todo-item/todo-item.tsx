@@ -139,6 +139,7 @@ const UnmemoizedTodoItem: React.FC<TodoItemProps> = ({ children, todo, parentId,
                     {!editing
                         ? todo.text
                         : <Input
+                            removeTodo={() => remove(index)}
                             defaultValue={todo.text}
                             onTextChange={onTextChange}
                             onTypingChange={setEditing} />}

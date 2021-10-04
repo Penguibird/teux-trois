@@ -9,6 +9,7 @@ import { useUserContext } from '../../../contexts/userContext';
 import firebase from 'firebase';
 import { useFirestore } from '../../../contexts/useFirestore';
 import { css } from '@emotion/react';
+import { useTodoContext } from '../context';
 
 
 const HeaderButton = styled(styled(UnstyledButton)(headerCss))`
@@ -47,14 +48,32 @@ const EditableHeader: React.FC<EditableHeaderProps> = ({ title, id }) => {
         documentRef.update({ name: text });
     }, [documentRef])
 
+    const { todos } = useTodoContext();
 
-    const changeTodoText = React.useCallback((text: string) => {
+    
+    const handleEmptyInput = async () => {
+        if (todos.length > 0) {
+            changeTodoText("NONAME")
+        } else {
+            // remove list
+            setTodoLists(todoLists => todoLists.filter(t => t.docId !== id))
+            await documentRef.delete()
+        }
+    }
+
+    const changeTodoText = (text: string) => {
+        if (text === "") {
+            handleEmptyInput();
+            return;
+        }
         setTodoLists(todoLists => {
             todoLists[todoLists.findIndex(_ => _.docId === id)].name = text
             updateText(text);
             return [...todoLists];
         })
-    }, [id, setTodoLists, updateText])
+    }
+
+
 
     const onTypingChange = React.useCallback((b: boolean) => {
         setEditing(b)
@@ -64,9 +83,12 @@ const EditableHeader: React.FC<EditableHeaderProps> = ({ title, id }) => {
         setEditing(true)
     }, [])
 
+
+
+
     return <>
         {editing
-            ? <Input css={inputCss} onTextChange={changeTodoText} onTypingChange={onTypingChange} defaultValue={title} />
+            ? <Input removeTodo={handleEmptyInput} css={inputCss} onTextChange={changeTodoText} onTypingChange={onTypingChange} defaultValue={title} />
             : <HeaderButton onClick={setEditingTrue} >{title}</HeaderButton>}
     </>
 }

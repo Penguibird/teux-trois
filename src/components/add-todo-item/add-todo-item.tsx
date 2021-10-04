@@ -16,7 +16,7 @@ interface AddTodoItemProps {
 
 const AddTodoItem: React.FC<AddTodoItemProps> = React.forwardRef(({ focusOnRender, css = StyledInputCss, addNewItem, onCancel }, forwardedRef: React.ForwardedRef<HTMLInputElement>) => {
     const myRef = React.useRef<HTMLInputElement>(null);
-    const ref = forwardedRef as React.MutableRefObject<HTMLInputElement> || myRef;
+    const inputRef = forwardedRef as React.MutableRefObject<HTMLInputElement> || myRef;
 
     const [text, setText] = React.useState<string>('');
 
@@ -28,7 +28,7 @@ const AddTodoItem: React.FC<AddTodoItemProps> = React.forwardRef(({ focusOnRende
         const handler = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
                 setText('');
-                ref.current?.blur();
+                inputRef.current?.blur();
 
                 if (onCancel) onCancel();
             }
@@ -37,11 +37,11 @@ const AddTodoItem: React.FC<AddTodoItemProps> = React.forwardRef(({ focusOnRende
         return () => {
             window.removeEventListener('keydown', handler)
         }
-    }, [onCancel, ref])
+    }, [onCancel, inputRef])
 
     React.useLayoutEffect(() => {
-        if (focusOnRender) ref.current?.focus();
-    }, [focusOnRender, ref])
+        if (focusOnRender) inputRef.current?.focus();
+    }, [focusOnRender, inputRef])
 
 
     const closeInput = React.useCallback(() => {
@@ -61,7 +61,7 @@ const AddTodoItem: React.FC<AddTodoItemProps> = React.forwardRef(({ focusOnRende
         <input
             //@ts-ignore
             css={css}
-            ref={ref}
+            ref={inputRef}
             value={text}
             onBlur={closeInput}
             onChange={onChange}
