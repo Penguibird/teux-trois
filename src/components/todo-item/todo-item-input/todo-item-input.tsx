@@ -11,14 +11,15 @@ import { StyledInputCss } from '../../../components-style/styledInput';
 interface InputProps {
     defaultValue?: string,
     onTypingChange: (editing: boolean) => void,
+    removeTodo: () => void
     onTextChange: (text: string) => void,
     css?: SerializedStyles,
 };
 
 
-const Input: React.FC<InputProps> = ({ css = StyledInputCss, defaultValue = "", onTypingChange, onTextChange, ...props }) => {
+const Input: React.FC<InputProps> = ({ css = StyledInputCss, defaultValue = "", onTypingChange, onTextChange, removeTodo, ...props }) => {
 
-    const [value, setValue] = React.useState<string>(defaultValue)
+    const [text, setText] = React.useState<string>(defaultValue)
     const inputRef = React.useRef<HTMLInputElement>(null);
 
 
@@ -26,10 +27,27 @@ const Input: React.FC<InputProps> = ({ css = StyledInputCss, defaultValue = "", 
         inputRef.current?.focus();
     }, [inputRef])
 
+    React.useEffect(() => {
+        const handler = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                setText(defaultValue);
+                inputRef.current?.blur();
 
+                // if (onCancel) onCancel();
+            }
+        }
+        window.addEventListener('keydown', handler)
+        return () => {
+            window.removeEventListener('keydown', handler)
+        }
+    }, [defaultValue])
 
     const closeInput = () => {
-        onTextChange(value);
+        if (text === "") {
+            removeTodo()
+        } else {
+            onTextChange(text);
+        }
         onTypingChange(false);
     }
 
@@ -41,8 +59,8 @@ const Input: React.FC<InputProps> = ({ css = StyledInputCss, defaultValue = "", 
             ref={inputRef}
             onBlur={closeInput}
             onClick={(e: React.MouseEvent) => e.stopPropagation()}
-            value={value}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setValue(e.target.value) }}
+            value={text}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setText(e.target.value) }}
             onKeyPress={(e: React.KeyboardEvent) => {
                 if (e.key === 'Enter') { closeInput() }
             }}

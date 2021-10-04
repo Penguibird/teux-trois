@@ -86,7 +86,9 @@ const UnmemoizedTodoItem: React.FC<TodoItemProps> = ({ children, todo, parentId,
 
     const [editing, setEditing] = React.useState(editingInitialValue)
 
-    const onClick = React.useCallback((e) => {
+    const onClick = React.useCallback((e: React.MouseEvent) => {
+        e.stopPropagation();
+
         toggleDone(index)
     }, [index, toggleDone])
 
@@ -100,7 +102,8 @@ const UnmemoizedTodoItem: React.FC<TodoItemProps> = ({ children, todo, parentId,
         setEditing(!editing)
     }, [editing])
 
-    const onDoubleClick = React.useCallback(() => {
+    const onDoubleClick = React.useCallback((e: React.MouseEvent) => {
+        e.stopPropagation();
         setEditing(true);
     }, [])
 
@@ -111,14 +114,12 @@ const UnmemoizedTodoItem: React.FC<TodoItemProps> = ({ children, todo, parentId,
     const key = todo.id
     // const key = parentId + todo.id
     const portalize = useOptionalPortal(todo.id);
-    // console.log("Rendering todo item", todo.text, key)
     return <Draggable
         draggableId={todo.id}
-
-        // draggableId={index+""}
-        key={key} index={index}>
+        key={key}
+        index={index}
+    >
         {(provided, snapshot) => {
-            // console.log(`Dragging todo "${todo.text}" over ${snapshot.draggingOver}`)
             return (portalize(snapshot.isDragging, <Item
                 ref={provided.innerRef}
                 key={key}                         {...provided.draggableProps}
@@ -138,6 +139,7 @@ const UnmemoizedTodoItem: React.FC<TodoItemProps> = ({ children, todo, parentId,
                     {!editing
                         ? todo.text
                         : <Input
+                            removeTodo={() => remove(index)}
                             defaultValue={todo.text}
                             onTextChange={onTextChange}
                             onTypingChange={setEditing} />}

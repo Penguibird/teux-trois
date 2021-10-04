@@ -40,7 +40,7 @@ const useMoveCustomLists = (todoLists: TodoList[], numberOfLists = 5) => {
             })
         },
         makeSpaceForNewList: () => {
-            setLeftShift(- (todoLists.length - 4))
+            setLeftShift(todoLists.length < 5 ? 0 : - (todoLists.length - 4))
         }
     }
     const showLeftButtons = React.useMemo(() => leftShift !== 0, [leftShift]);

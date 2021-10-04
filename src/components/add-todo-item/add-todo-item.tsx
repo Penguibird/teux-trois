@@ -10,12 +10,13 @@ interface AddTodoItemProps {
     addNewItem: (t: string) => void
     onCancel?: () => void
     css?: SerializedStyles
+    ref?: any;
     focusOnRender?: boolean
 };
 
-const AddTodoItem: React.FC<AddTodoItemProps> = ({ focusOnRender, css = StyledInputCss, addNewItem, onCancel }) => {
-    const ref = React.useRef<HTMLInputElement>(null);
-
+const AddTodoItem: React.FC<AddTodoItemProps> = React.forwardRef(({ focusOnRender, css = StyledInputCss, addNewItem, onCancel }, forwardedRef: React.ForwardedRef<HTMLInputElement>) => {
+    const myRef = React.useRef<HTMLInputElement>(null);
+    const inputRef = forwardedRef as React.MutableRefObject<HTMLInputElement> || myRef;
 
     const [text, setText] = React.useState<string>('');
 
@@ -27,7 +28,7 @@ const AddTodoItem: React.FC<AddTodoItemProps> = ({ focusOnRender, css = StyledIn
         const handler = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
                 setText('');
-                ref.current?.blur();
+                inputRef.current?.blur();
 
                 if (onCancel) onCancel();
             }
@@ -36,18 +37,23 @@ const AddTodoItem: React.FC<AddTodoItemProps> = ({ focusOnRender, css = StyledIn
         return () => {
             window.removeEventListener('keydown', handler)
         }
-    }, [onCancel])
+    }, [onCancel, inputRef])
 
     React.useLayoutEffect(() => {
-        if (focusOnRender) ref.current?.focus();
-    }, [focusOnRender])
+        if (focusOnRender) inputRef.current?.focus();
+    }, [focusOnRender, inputRef])
 
 
     const closeInput = React.useCallback(() => {
-        if (text === "") return;
+        if (text === "") {
+            if (onCancel) onCancel();
+            return;
+        }
         setText('')
         addNewItem(text)
-    }, [addNewItem, text])
+
+
+    }, [addNewItem, onCancel, text])
 
 
     return <React.Fragment>
@@ -55,7 +61,7 @@ const AddTodoItem: React.FC<AddTodoItemProps> = ({ focusOnRender, css = StyledIn
         <input
             //@ts-ignore
             css={css}
-            ref={ref}
+            ref={inputRef}
             value={text}
             onBlur={closeInput}
             onChange={onChange}
@@ -66,5 +72,5 @@ const AddTodoItem: React.FC<AddTodoItemProps> = ({ focusOnRender, css = StyledIn
         />
     </React.Fragment>
 }
-
+)
 export default AddTodoItem;

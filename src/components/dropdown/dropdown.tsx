@@ -73,7 +73,7 @@ const DropDownToggle: React.FC<DropDownToggleProps> = ({ children, ...props }) =
         className={props.className}
         onMouseEnter={() => setOpen(true)}
         onClick={() => {
-            console.log("clicked")
+            // console.log("clicked")
             setOpen(true);
             setOpenedByClick(true);
         }}

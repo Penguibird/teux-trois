@@ -4,6 +4,7 @@ import { InnerList, List } from './todo-list';
 import { TopBar } from './../../components-style/list-topbar';
 import HandleIcon from './../../assets/images/handle-icon';
 import { Handle } from './../../pages/todos-page/custom-lists-view/custom-lists-view';
+import { useNumberOfListsInRowQuery } from './../../hooks/useNumberOfListsInRowQuery';
 
 
 interface AddTodoListProps {
@@ -11,7 +12,9 @@ interface AddTodoListProps {
 };
 
 const AddTodoList: React.FC<AddTodoListProps> = ({ children }) => {
-    return <List>
+    const numberOfLists = useNumberOfListsInRowQuery({});
+
+    return <List numberOfLists={numberOfLists}>
         <TopBar>
             <Handle>
                 <HandleIcon />

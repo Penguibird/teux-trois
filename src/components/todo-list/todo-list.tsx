@@ -25,7 +25,7 @@ import { TopBar } from './../../components-style/list-topbar';
 import { useNumberOfListsInRowQuery } from '../../hooks/useNumberOfListsInRowQuery';
 
 
-const List = styled.div<{ isToday?: boolean, isInThePast?: boolean, numberOfLists?: number }>`
+const List = styled.div<{ isToday?: boolean, isInThePast?: boolean, numberOfLists: number }>`
     box-sizing: border-box;    
     display: flex;
     align-items: center;
@@ -174,7 +174,10 @@ const UnwrappedTodoList = React.forwardRef<any, any>(({ headerEditingComponent, 
 
     const numberOfLists = useNumberOfListsInRowQuery({});
 
-
+    const addTodoInputRef = React.useRef<HTMLInputElement>()
+    const focusAddTOdoInput = React.useCallback(() => {
+        addTodoInputRef.current?.focus()
+    }, [])
 
     // console.log("Rendering todo list", title, todos)
     return <List className="todo__list-wrapper" id={droppableID} {...props} ref={ref} isToday={isToday} isInThePast={isInThePast} numberOfLists={numberOfLists}>
@@ -189,12 +192,13 @@ const UnwrappedTodoList = React.forwardRef<any, any>(({ headerEditingComponent, 
                 <InnerList className="todo__list-inner"
                     {...provided.droppableProps}
                     ref={provided.innerRef}
+                    onClick={focusAddTOdoInput}
                 >
                     {todos?.map((todo: Todo, i) =>
                         <TodoItem remove={remove} parentId={droppableID} updateTodoText={updateTodoText} toggleDone={toggleTodoDone} todo={todo} key={todo.id} index={i} />
                     )}
                     {provided.placeholder}
-                    <AddTodoItem addNewItem={addNewItem} />
+                    <AddTodoItem addNewItem={addNewItem} ref={addTodoInputRef} />
                 </InnerList>
             )}
         </Droppable>
