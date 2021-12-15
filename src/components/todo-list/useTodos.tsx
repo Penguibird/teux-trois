@@ -72,7 +72,7 @@ function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
                 })
             }
         })
-    }, [id, setTodos])
+    }, [setTodos])
     const { loading, error } = useGenericFirebaseFetch({
         collectionRef: orderedCollectionRef, outputCallback, subscribeCallback
     })
