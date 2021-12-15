@@ -11,6 +11,7 @@
 
 # production
 /build
+/dist
 
 # env files
 .env
@@ -26,8 +27,18 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+
+# build tool caches
+/.parcel-cache
+
 # vscode workspace settings
 .vscode
 
+# firebase logs
+ui-debug.log
+ui-debug.*.log
 firebase-debug.log
+firebase-debug.*.log
+firestore-debug.log
+firestore-debug.*.log
 .firebase
