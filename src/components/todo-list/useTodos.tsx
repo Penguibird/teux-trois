@@ -3,7 +3,7 @@ import { useUserContext } from '../../contexts/userContext';
 import Todo from '../../types/Todo';
 import { useTodoContext } from './context';
 import firebase from 'firebase';
-import useGenericFirebaseFetch from '../../hooks/useGenericFirebaseFetch';
+import {genericFirebaseFetch} from '../../hooks/useGenericFirebaseFetch';
 import { useFirestore } from '../../contexts/useFirestore';
 
 function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
@@ -74,11 +74,25 @@ function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
         })
     }, [setTodos])
 
-    const { loading, error } = useGenericFirebaseFetch({
-        collectionRef: orderedCollectionRef, outputCallback, subscribeCallback
-    })
 
-    
+    const [loading, setLoading] = React.useState(true)
+    const [error, setError] = React.useState<any>(null)
+
+    try {
+        genericFirebaseFetch({
+            db,
+            collectionRef: orderedCollectionRef,
+            outputCallback: (data) => {
+                outputCallback(data);
+                setLoading(false)
+            }, subscribeCallback
+        })
+    } catch (er) {
+        setLoading(false)
+        setError(er)
+    }
+
+
 
     const updateTodo = React.useCallback((id: Todo["id"]) => async (updateTodoValues: Partial<Todo>) => {
         await collectionRef?.doc(id).update(updateTodoValues);
