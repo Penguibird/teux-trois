@@ -11,10 +11,10 @@ module.exports = {
         "react-app/jest"
     ],
     parserOptions: {
-        project: ["tsconfig.json"],
+        project: ["tsconfig.json", "functions/tsconfig.json"],
         sourceType: "module",
     },
-    
+
     "overrides": [
         {
             "files": [

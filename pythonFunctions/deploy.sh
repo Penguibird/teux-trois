@@ -1,0 +1,2 @@
+yes | gcloud functions deploy getNotes --entry-point=getNotes --runtime=python37 --trigger-http --region=europe-west3 --project=teux-trois
+yes | gcloud functions deploy addNotes --entry-point=addNotes --runtime=python37 --trigger-http --region=europe-west3 --project=teux-trois
