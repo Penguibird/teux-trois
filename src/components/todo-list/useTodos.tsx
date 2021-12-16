@@ -73,10 +73,12 @@ function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
             }
         })
     }, [setTodos])
+
     const { loading, error } = useGenericFirebaseFetch({
         collectionRef: orderedCollectionRef, outputCallback, subscribeCallback
     })
 
+    
 
     const updateTodo = React.useCallback((id: Todo["id"]) => async (updateTodoValues: Partial<Todo>) => {
         await collectionRef?.doc(id).update(updateTodoValues);

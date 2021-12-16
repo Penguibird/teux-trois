@@ -69,7 +69,7 @@ const useGenericFirebaseFetch = ({ getCollectionRef, outputCallback, subscribeCa
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    return { loading, error, collectionRef }
+    return { loading, error, collectionRef };
 }
 
 export default useGenericFirebaseFetch
