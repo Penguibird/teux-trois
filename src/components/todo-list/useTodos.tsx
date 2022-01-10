@@ -5,11 +5,17 @@ import { useTodoContext } from './context';
 import { genericFirebaseFetch } from '../../hooks/useGenericFirebaseFetch';
 import { useFirestore } from '../../contexts/useFirestore';
 import type { CollectionReference, DocumentData, QuerySnapshot, } from "firebase/firestore"
-import { orderBy, query, deleteDoc, setDoc, updateDoc,  collection, doc } from "firebase/firestore"
+import { orderBy, query, deleteDoc, setDoc, updateDoc, collection, doc } from "firebase/firestore"
+import { useEventBus } from '../../contexts/eventBusContext';
+import { resolve } from 'path';
+
+const parseData = (data: QuerySnapshot) => data.docs.map((_: any) => _.data()) as unknown as Todo[];
 function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
 
     const user = useUserContext();
     const { todos, setTodos } = useTodoContext();
+
+    const eventBus = useEventBus();
 
     const db = useFirestore();
     const collectionRef = React.useMemo<CollectionReference<DocumentData>>(() => {
@@ -25,38 +31,39 @@ function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
     const [loading, setLoading] = React.useState(true)
     const [error, setError] = React.useState<any>(null)
 
-    React.useEffect(() => {
+    const outputCallback = React.useCallback((data) => {
+        if (data.metadata.hasPendingWrites) return;
+        const items = parseData(data)
+        setTodos(items)
+    }, [setTodos])
 
+    React.useEffect(() => {
         try {
             genericFirebaseFetch({
                 db,
                 collectionRef: orderedCollectionRef,
                 outputCallback: (data) => {
-                    const items = data.docs.map((_: any) => _.data()) as unknown as Todo[];
-
-                    if (items !== todos) {
-                        setTodos(items)
+                    const doStuff = (todos: Todo[]) => {
+                        setLoading(false)
+                        setTodos(todos)
                     }
 
-                    setLoading(false)
-                },
-                subscribeCallback: (data) => {
-                    console.log("Subscribe Callback called: ", id, " changing stuff ", data.metadata.hasPendingWrites, data.metadata)
-                    if (data.metadata.hasPendingWrites) return;
-
-                    const items = data.docs.map((_: any) => _.data()) as unknown as Todo[];
-
-                    if (items !== todos) {
-                        setTodos(items)
+                    const promise = eventBus.publish('onFetchList', parseData(data));
+                    if (promise) {
+                        promise.then(doStuff);
+                    } else {
+                        doStuff(parseData(data))
                     }
-
-                    // setLoading(false)
                 },
+                subscribeCallback: outputCallback,
             })
         } catch (er) {
             setLoading(false)
             setError(er)
         }
+
+
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 

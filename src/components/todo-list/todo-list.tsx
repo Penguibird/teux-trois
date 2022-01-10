@@ -23,6 +23,7 @@ import { useItemMoveObserverContext } from '../../contexts/itemMoveObserverConte
 import { useDragObserverContext } from '../../contexts/dragContext';
 import { TopBar } from './../../components-style/list-topbar';
 import { useNumberOfListsInRowQuery } from '../../hooks/useNumberOfListsInRowQuery';
+import { EventBusProvider, useEventBus } from '../../contexts/eventBusContext';
 
 
 const List = styled.div<{ isToday?: boolean, isInThePast?: boolean, numberOfLists: number }>`
@@ -110,6 +111,12 @@ const UnwrappedTodoList = React.forwardRef<any, any>(({ headerEditingComponent, 
     const droppableID = `droppable-${id}`;
     // console.log("Rerendering todo list", droppableID)
 
+    const eventBus = useEventBus();
+    React.useEffect(() => {
+        eventBus.publish('onInitialize');
+    }, [eventBus])
+
+
     const displayDate = React.useMemo(() => {
         if (!datetime)
             return;
@@ -121,6 +128,9 @@ const UnwrappedTodoList = React.forwardRef<any, any>(({ headerEditingComponent, 
 
 
     const { todos, setTodos } = useTodoContext();
+    React.useEffect(() => {
+        eventBus.publish('onUpdateList', { todoListName: title, todos });
+    })
 
     //Fetches todos
     const { updateTodo, createTodo, removeTodo, updateTodoListIndexes } = useTodos(id, customList ? 'customTodos' : 'todos');
@@ -142,7 +152,6 @@ const UnwrappedTodoList = React.forwardRef<any, any>(({ headerEditingComponent, 
                 publishItemMove({ todo: removedItem, result }, result.destination.droppableId);
                 setTodos([...todos])
             }
-
             if (result.destination!.droppableId === droppableID || result.source.droppableId === droppableID) {
                 updateTodoListIndexes();
             }
@@ -206,9 +215,11 @@ const UnwrappedTodoList = React.forwardRef<any, any>(({ headerEditingComponent, 
 
 })
 
-const UnmemoizedTodoList = React.forwardRef<any, any>((props, ref) => <TodoContextProvider>
-    <UnwrappedTodoList {...props} ref={ref} />
-</TodoContextProvider>)
+const UnmemoizedTodoList = React.forwardRef<any, any>((props: TodoListProps, ref) => <EventBusProvider id={props.id}>
+    <TodoContextProvider>
+        <UnwrappedTodoList {...props} ref={ref} />
+    </TodoContextProvider>
+</EventBusProvider>)
 
 const TodoList = React.memo(UnmemoizedTodoList, compareObjects(['id', 'datetime', 'title', 'children']));
 

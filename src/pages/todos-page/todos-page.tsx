@@ -15,6 +15,9 @@ import colors from '../../style/themes/colors';
 import UnstyledButton from './../../components-style/unstyledButton';
 import { FirestoreProvider } from './../../contexts/useFirestore';
 import { getAuth } from '@firebase/auth';
+import testConsolePlugin from '../../plugins/testConsolePlugin';
+import EventBusList from '../../services/EventBusList';
+import { getDateId } from '../../utils/dateHelpers';
 
 const DraggablePortal = styled.div`
     pointer-events: none;
@@ -51,6 +54,9 @@ const DropdownItem = styled(UnstyledButton)`
 
 const UnwrappedTodosPage: React.FC<TodosPageProps> = ({ }) => {
 
+    React.useEffect(()=>{
+       testConsolePlugin.init(EventBusList.getEventBus(getDateId(Date.now())))
+    },[])
     const { publish } = useDragObserverContext();
     const onDragEnd = (result: DropResult) => {
         if (result.type === "CUSTOMLISTS") {
