@@ -5,7 +5,7 @@ import { useTodoContext } from './context';
 import { genericFirebaseFetch } from '../../hooks/useGenericFirebaseFetch';
 import { useFirestore } from '../../contexts/useFirestore';
 import type { CollectionReference, DocumentData, QuerySnapshot, } from "firebase/firestore"
-import { orderBy, query, deleteDoc, setDoc, updateDoc, getDoc, collection, doc } from "firebase/firestore"
+import { orderBy, query, deleteDoc, setDoc, updateDoc,  collection, doc } from "firebase/firestore"
 function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
 
     const user = useUserContext();
@@ -21,40 +21,6 @@ function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
         () => query(collectionRef, orderBy("index")),
         [collectionRef]
     )
-
-    const subscribeCallback = React.useCallback((data: QuerySnapshot<DocumentData>) => {
-        data.docChanges().forEach((v) => {
-            // console.log(id, v.type, v.doc)
-            const todo: Todo = v.doc.data() as any as Todo;
-            if (v.type === 'added') {
-                setTodos((todos: Todo[]) => {
-                    if (!todos.some((t) => t.id === todo.id)) {
-                        todos.splice(v.newIndex, 0, todo);
-                        return [...todos];
-                    } else {
-                        return todos;
-                    }
-                })
-            }
-            if (v.type === 'removed') {
-                setTodos((todos: Todo[]) =>
-                    [...todos.filter(t => t.id !== todo.id)]
-                )
-            }
-            if (v.type === 'modified') {
-                setTodos((todos: Todo[]) => {
-                    const index = todos.findIndex((_) => _.id === todo.id);
-                    if (index !== -1) {
-                        todos[index] = todo;
-                        return [...todos];
-                    } else {
-                        return todos;
-                    }
-                })
-            }
-        })
-    }, [setTodos])
-
 
     const [loading, setLoading] = React.useState(true)
     const [error, setError] = React.useState<any>(null)
@@ -105,6 +71,7 @@ function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
 
     const removeTodo = async (id: Todo["id"]) => {
         // console.log("Removing todo", id)
+        console.log("Removing ", id)
         await deleteDoc(doc(collectionRef, id))
     }
 

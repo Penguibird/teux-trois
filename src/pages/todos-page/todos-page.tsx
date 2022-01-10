@@ -10,7 +10,6 @@ import blurAllInputs from './../../utils/blurAllInputs';
 import styled from '@emotion/styled';
 import { useUserContext } from '../../contexts/userContext';
 import Dropdown from './../../components/dropdown/dropdown';
-import firebaseInstance from '../../services/firebase/firebase';
 import { css } from '@emotion/css';
 import colors from '../../style/themes/colors';
 import UnstyledButton from './../../components-style/unstyledButton';
