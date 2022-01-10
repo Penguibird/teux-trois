@@ -74,7 +74,18 @@ function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
 
                     setLoading(false)
                 },
-                subscribeCallback
+                subscribeCallback: (data) => {
+                    console.log("Subscribe Callback called: ", id, " changing stuff ", data.metadata.hasPendingWrites, data.metadata)
+                    if (data.metadata.hasPendingWrites) return;
+
+                    const items = data.docs.map((_: any) => _.data()) as unknown as Todo[];
+
+                    if (items !== todos) {
+                        setTodos(items)
+                    }
+
+                    // setLoading(false)
+                },
             })
         } catch (er) {
             setLoading(false)
