@@ -18,8 +18,8 @@
     "@types/react-beautiful-dnd": "^13.1.1",
     "@types/react-dom": "^17.0.9",
     "dotenv": "^10.0.0",
-    "firebase": "^8.8.1",
-    "firebaseui": "^4.8.1",
+    "firebase": "^9.6.2",
+    "firebaseui": "^6.0.0",
     "react": "^17.0.2",
     "react-beautiful-dnd": "^13.1.0",
     "react-dom": "^17.0.2",
@@ -31,7 +31,8 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "craco start & firebase emulators:start",
+    "start": "craco start & npm run emulate",
+    "emulate": "firebase emulators:start",
     "build": "craco build",
     "test": "craco test",
     "eject": "craco eject",

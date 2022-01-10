@@ -26,7 +26,7 @@ import CrossIcon from './../../../assets/images/cross-icon';
 import { TopBar } from './../../../components-style/list-topbar';
 import { useNumberOfListsInRowQuery } from '../../../hooks/useNumberOfListsInRowQuery';
 import { css } from '@emotion/react';
-
+import { setDoc, updateDoc, deleteDoc, doc } from "firebase/firestore"
 
 const IconButton = styled(UnstyledButton)`
     width: min-content;
@@ -184,9 +184,7 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
             name: t,
             index: todoLists.length,
         };
-        collectionRef
-            .doc(id)
-            .set(newTodoList as TodoListType);
+        setDoc(doc(collectionRef, id), newTodoList as TodoListType);
         setTodoLists((prevVal: TodoListType[]) => [...prevVal, newTodoList]);
         setAddingTodoList(false)
 
@@ -197,7 +195,7 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
     }, [])
 
     const removeTodoList = (i: number) => () => {
-        collectionRef.doc(todoLists[i].docId).delete();
+        deleteDoc(doc(collectionRef, todoLists[i].docId));
         todoLists.splice(i, 1);
         setTodoLists([...todoLists]);
         if (leftShift !== 0) move.oneLeft();
@@ -212,7 +210,7 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
                 // .splice(0, Math.max(result.source.index, result.destination.index))
                 .forEach((todoList, i) => {
                     todoList.index = i;
-                    collectionRef.doc(todoList.docId).update({ index: i })
+                    updateDoc(doc(collectionRef, todoList.docId), { index: i })
                 })
             setTodoLists([...todoLists]);
 

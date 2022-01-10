@@ -3,9 +3,12 @@ import { useEffect } from 'react';
 
 import './login.css';
 
-import firebase from 'firebase';
+// import firebase from 'firebase/compat/app';
 import * as firebaseui from 'firebaseui';
+import 'firebaseui/dist/firebaseui.css'
+
 import firebaseInstance from '../../services/firebase/firebase';
+import { getAuth, connectAuthEmulator, GoogleAuthProvider } from "firebase/auth"
 import { useUserContext } from '../../contexts/userContext';
 import colors from '../../style/themes/colors';
 
@@ -13,10 +16,10 @@ interface LoginProps {
 
 };
 
-const auth = firebaseInstance.auth()
+const auth = getAuth(firebaseInstance)
 if (window.location.hostname === "localhost") {
     console.log("Connecting to authentication emulator on port ", 9099)
-    auth.useEmulator("http://localhost:9099");
+    connectAuthEmulator(auth, "http://localhost:9099");
 }
 var ui = new firebaseui.auth.AuthUI(auth);
 
@@ -34,7 +37,7 @@ const Login: React.FC<LoginProps> = ({ }) => {
         ui.start('#firebaseui-auth-container', {
             signInOptions: [
                 // firebase.auth.EmailAuthProvider.PROVIDER_ID,
-                firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+                GoogleAuthProvider.PROVIDER_ID,
                 // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
                 // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
                 // firebase.auth.GithubAuthProvider.PROVIDER_ID

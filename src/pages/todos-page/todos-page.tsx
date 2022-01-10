@@ -15,6 +15,7 @@ import { css } from '@emotion/css';
 import colors from '../../style/themes/colors';
 import UnstyledButton from './../../components-style/unstyledButton';
 import { FirestoreProvider } from './../../contexts/useFirestore';
+import { getAuth } from '@firebase/auth';
 
 const DraggablePortal = styled.div`
     pointer-events: none;
@@ -63,7 +64,7 @@ const UnwrappedTodosPage: React.FC<TodosPageProps> = ({ }) => {
     const user = useUserContext();
 
     const logOut = React.useCallback(() => {
-        firebaseInstance.auth().signOut().then(() => {
+        getAuth().signOut().then(() => {
             window.location.reload();
         });
     }, [])

@@ -2,46 +2,27 @@ import * as React from 'react'
 import { useUserContext } from '../../contexts/userContext';
 import Todo from '../../types/Todo';
 import { useTodoContext } from './context';
-import firebase from 'firebase';
-import {genericFirebaseFetch} from '../../hooks/useGenericFirebaseFetch';
+import { genericFirebaseFetch } from '../../hooks/useGenericFirebaseFetch';
 import { useFirestore } from '../../contexts/useFirestore';
-
+import type { CollectionReference, DocumentData, QuerySnapshot, } from "firebase/firestore"
+import { orderBy, query, deleteDoc, setDoc, updateDoc, getDoc, collection, doc } from "firebase/firestore"
 function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
 
     const user = useUserContext();
     const { todos, setTodos } = useTodoContext();
 
     const db = useFirestore();
-    const collectionRef = React.useMemo<firebase.firestore.CollectionReference<firebase.firestore.DocumentData>>(() => {
-        return db
-            .collection('users')
-            .doc(user.user?.uid)
-            .collection(todosCollection)
-            .doc(id)
-            .collection('items')
+    const collectionRef = React.useMemo<CollectionReference<DocumentData>>(() => {
+        return collection(doc(collection(doc(collection(db, 'users'), user.user?.uid), todosCollection), id), 'items')
 
     }, [db, id, todosCollection, user.user?.uid]);
 
     const orderedCollectionRef = React.useMemo(
-        () => collectionRef.orderBy("index"),
+        () => query(collectionRef, orderBy("index")),
         [collectionRef]
     )
 
-    const outputCallback = React.useCallback(
-        (data: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => {
-            const items = data.docs.map(_ => _.data()) as unknown as Todo[];
-
-            if (items !== todos) {
-                setTodos(items)
-            }
-            // TODO Better comparison
-            // TODO surgical changes
-
-        },
-        [setTodos, todos]
-    )
-
-    const subscribeCallback = React.useCallback((data: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => {
+    const subscribeCallback = React.useCallback((data: QuerySnapshot<DocumentData>) => {
         data.docChanges().forEach((v) => {
             // console.log(id, v.type, v.doc)
             const todo: Todo = v.doc.data() as any as Todo;
@@ -78,34 +59,42 @@ function useTodos(id: string, todosCollection: 'todos' | 'customTodos') {
     const [loading, setLoading] = React.useState(true)
     const [error, setError] = React.useState<any>(null)
 
-    try {
-        genericFirebaseFetch({
-            db,
-            collectionRef: orderedCollectionRef,
-            outputCallback: (data) => {
-                outputCallback(data);
-                setLoading(false)
-            }, subscribeCallback
-        })
-    } catch (er) {
-        setLoading(false)
-        setError(er)
-    }
+    React.useEffect(() => {
 
+        try {
+            genericFirebaseFetch({
+                db,
+                collectionRef: orderedCollectionRef,
+                outputCallback: (data) => {
+                    const items = data.docs.map((_: any) => _.data()) as unknown as Todo[];
+
+                    if (items !== todos) {
+                        setTodos(items)
+                    }
+
+                    setLoading(false)
+                },
+                subscribeCallback
+            })
+        } catch (er) {
+            setLoading(false)
+            setError(er)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
 
     const updateTodo = React.useCallback((id: Todo["id"]) => async (updateTodoValues: Partial<Todo>) => {
-        await collectionRef?.doc(id).update(updateTodoValues);
+        await updateDoc(doc(collectionRef, id), updateTodoValues)
     }, [collectionRef])
 
     const createTodo = async (newTodo: Todo) => {
-        await collectionRef?.doc(newTodo.id).set(newTodo);
+        await setDoc(doc(collectionRef, newTodo.id), newTodo)
     }
 
     const removeTodo = async (id: Todo["id"]) => {
         // console.log("Removing todo", id)
-        await collectionRef?.doc(id).delete()
-            .catch(console.error);
+        await deleteDoc(doc(collectionRef, id))
     }
 
     const updateTodoListIndexes = React.useCallback(() => {

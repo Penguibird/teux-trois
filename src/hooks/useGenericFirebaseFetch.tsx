@@ -1,17 +1,17 @@
 
-import firebase from 'firebase';
 import * as React from 'react';
 import { useFirestore } from '../contexts/useFirestore';
+import type { Firestore, DocumentData, QuerySnapshot, FirestoreError, Query } from "firebase/firestore"
+import { onSnapshot, getDocs } from "firebase/firestore"
 
-
-type firestoreRef = firebase.firestore.Query<firebase.firestore.DocumentData>
+type firestoreRef = Query<DocumentData>
 
 interface useGenericFIrebaseFetchProps {
-    db: firebase.firestore.Firestore
-    outputCallback: (data: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => void
-    subscribeCallback?: (data: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => void
+    db: Firestore
+    outputCallback: (data: QuerySnapshot<DocumentData>) => void
+    subscribeCallback?: (data: QuerySnapshot<DocumentData>) => void
     collectionRef?: firestoreRef
-    getCollectionRef?: (db: firebase.firestore.Firestore) => firestoreRef
+    getCollectionRef?: (db: Firestore) => firestoreRef
     subscribe?: boolean
 }
 
@@ -29,8 +29,7 @@ const genericFirebaseFetch = ({ db, getCollectionRef, outputCallback, subscribeC
 
     async function fetchData() {
         if (!collectionRef) return;
-        const data = await collectionRef
-            .get();
+        const data = await getDocs(collectionRef);
         outputCallback(data)
 
     }
@@ -38,8 +37,8 @@ const genericFirebaseFetch = ({ db, getCollectionRef, outputCallback, subscribeC
 
     if (doSubscription || subscribeCallback) {
 
-        return collectionRef.onSnapshot({
-            next: (snapshot: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => {
+        return onSnapshot(collectionRef, {
+            next: (snapshot: QuerySnapshot<DocumentData>) => {
                 // console.log(snapshot.docChanges(), snapshot.query)
 
                 if (subscribeCallback) {
@@ -48,7 +47,7 @@ const genericFirebaseFetch = ({ db, getCollectionRef, outputCallback, subscribeC
                     outputCallback(snapshot);
                 }
             },
-            error: (e: firebase.firestore.FirestoreError) => { console.error(`Firebase error ${e.code} ${e.name} ${e.message}`) }
+            error: (e: FirestoreError) => { console.error(`Firebase error ${e.code} ${e.name} ${e.message}`) }
         })
     }
 

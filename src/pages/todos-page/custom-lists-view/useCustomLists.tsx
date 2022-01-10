@@ -1,6 +1,7 @@
 
 import * as React from 'react';
-import firebase from 'firebase';
+import { collection, doc, orderBy, query } from 'firebase/firestore';
+import type { QuerySnapshot, DocumentData } from 'firebase/firestore';
 import { TodoList } from '../../../types/TodoList';
 import useGenericFirebaseFetch from '../../../hooks/useGenericFirebaseFetch';
 import { useUserContext } from '../../../contexts/userContext';
@@ -9,20 +10,20 @@ import { useFirestore } from '../../../contexts/useFirestore';
 
 export const useCustomLists = () => {
     const user = useUserContext();
-    
+
     const { setTodoLists } = useTodoListsContext();
-    
+
     const db = useFirestore();
     const collectionRef = React.useMemo(
-        () => db
-            .collection('users')
-            .doc(user.user?.uid)
-            .collection('customTodos'),
+        () =>
+            collection(doc(collection(db, 'users')
+                , user.user?.uid)
+                , 'customTodos'),
         [db, user.user?.uid]
     );
 
     const outputCallback = React.useCallback(
-        (data: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => {
+        (data: QuerySnapshot<DocumentData>) => {
             if (!setTodoLists) return;
             setTodoLists(
                 data.docs.map(doc => ({
@@ -33,7 +34,7 @@ export const useCustomLists = () => {
         }, [setTodoLists])
 
     const orderedCollectionRef = React.useMemo(
-        () => collectionRef.orderBy('index'),
+        () => query(collectionRef, orderBy('index')),
         [collectionRef]
     );
 
@@ -43,5 +44,5 @@ export const useCustomLists = () => {
         subscribe: true,
     })
 
-    return {collectionRef}
+    return { collectionRef }
 }

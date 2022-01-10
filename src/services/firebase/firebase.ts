@@ -1,8 +1,9 @@
-import firebase from "firebase";
+import { initializeApp } from "firebase/app";
+import {initializeAnalytics} from "firebase/analytics"
 // require('dotenv').config();
 
 // console.log(process.env)
-let firebaseInstance = firebase.initializeApp({
+let firebaseInstance = initializeApp({
     apiKey: 'AIzaSyAv7MEECvK3oDxvXKPwkwAaMm26q8uoBbM',
     authDomain: "teux-trois.firebaseapp.com",
     projectId: "teux-trois",
@@ -11,8 +12,7 @@ let firebaseInstance = firebase.initializeApp({
     appId: "1:728110419687:web:7990f8102442b8ce395c42",
     measurementId: "G-89GN0912B4"
 });
-firebaseInstance.analytics();
-
+initializeAnalytics(firebaseInstance)
 
 export default firebaseInstance
 

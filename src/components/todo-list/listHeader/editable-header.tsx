@@ -6,12 +6,12 @@ import { headerCss } from './header';
 import UnstyledButton from '../../../components-style/unstyledButton';
 import styled from '@emotion/styled';
 import { useUserContext } from '../../../contexts/userContext';
-import firebase from 'firebase';
 import { useFirestore } from '../../../contexts/useFirestore';
 import { css } from '@emotion/react';
 import { useTodoContext } from '../context';
+import { updateDoc, deleteDoc, collection, doc } from "firebase/firestore"
 
-
+import type { DocumentReference, DocumentData } from "firebase/firestore";
 const HeaderButton = styled(styled(UnstyledButton)(headerCss))`
     cursor: text;
 `
@@ -35,29 +35,24 @@ const EditableHeader: React.FC<EditableHeaderProps> = ({ title, id }) => {
 
     const user = useUserContext();
     const db = useFirestore();
-    const documentRef = React.useMemo<firebase.firestore.DocumentReference<firebase.firestore.DocumentData>>(() => {
-
-        return db
-            .collection('users')
-            .doc(user.user?.uid)
-            .collection('customTodos')
-            .doc(id)
+    const documentRef = React.useMemo<DocumentReference<DocumentData>>(() => {
+        return doc(collection(doc(collection(db, 'users'), user.user?.uid), 'customTodos'), id);
     }, [db, id, user.user?.uid]);
 
     const updateText = React.useCallback((text: string) => {
-        documentRef.update({ name: text });
+        updateDoc(documentRef, { name: text });
     }, [documentRef])
 
     const { todos } = useTodoContext();
 
-    
+
     const handleEmptyInput = async () => {
         if (todos.length > 0) {
             changeTodoText("NONAME")
         } else {
             // remove list
             setTodoLists(todoLists => todoLists.filter(t => t.docId !== id))
-            await documentRef.delete()
+            await deleteDoc(documentRef)
         }
     }
 

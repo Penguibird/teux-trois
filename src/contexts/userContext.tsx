@@ -1,10 +1,9 @@
 import React, { useContext, useState, createContext, useMemo, } from 'react';
-import firebase from 'firebase'
-
+import type { User } from "firebase/auth"
 
 interface userStateType {
-    user: firebase.User | null;
-    setUser: React.Dispatch<React.SetStateAction<firebase.User | null>> | null;
+    user: User | null;
+    setUser: React.Dispatch<React.SetStateAction<User | null>> | null;
 }
 
 const UserContext = createContext<userStateType>({
@@ -25,7 +24,7 @@ const useUserContext = () => {
 
 const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
-    const [user, setUser] = useState<firebase.User | null>(null);
+    const [user, setUser] = useState<User | null>(null);
 
     const value = useMemo(() => ({ user, setUser }), [user]);
 
