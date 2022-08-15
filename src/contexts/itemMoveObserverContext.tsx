@@ -3,7 +3,7 @@
 import generateObserverContext from './genericKeyObserverContext';
 
 import { DropResult } from 'react-beautiful-dnd';
-import Todo from './../types/Todo';
+import Todo from '../types/Todo';
 
 
 interface ItemMoveEvent {

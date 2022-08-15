@@ -1,7 +1,7 @@
 import * as React from 'react';
 //import {Fragment, useState, useEffect} from 'react';
 import Login from './login';
-import Layout from './../../components-style/layout';
+import Layout from '../../components-style/layout';
 import styled from '@emotion/styled';
 import colors from '../../style/themes/colors';
 

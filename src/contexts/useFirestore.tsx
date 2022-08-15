@@ -1,6 +1,6 @@
 
 import React from 'react';
-import firebaseInstance from './../services/firebase/firebase';
+import firebaseInstance from '../services/firebase/firebase';
 import type { Firestore } from "firebase/firestore";
 import { initializeFirestore, enableIndexedDbPersistence, connectFirestoreEmulator } from "firebase/firestore";
 

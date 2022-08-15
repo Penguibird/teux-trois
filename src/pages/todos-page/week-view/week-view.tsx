@@ -10,7 +10,7 @@ import HomeIcon from '../../../assets/images/home-icon';
 import useMoveCarousel from './useMoveCarousel';
 import { SideBar, Button, ButtonProps } from '../../../components-style/sidebar/sidebar';
 import { useUserPreferences } from '../../../contexts/userPreferences';
-import { UserPreferences } from './../../../types/UserPreferences';
+import { UserPreferences } from '../../../types/UserPreferences';
 import { useNumberOfListsInRowQuery } from '../../../hooks/useNumberOfListsInRowQuery';
 import { useRef } from 'react';
 

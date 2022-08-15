@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { UserPreferences } from './../types/UserPreferences';
+import { UserPreferences } from '../types/UserPreferences';
 
 const defaultPreferences: UserPreferences = {
     weekListBehavior: 'startAtYesterday'

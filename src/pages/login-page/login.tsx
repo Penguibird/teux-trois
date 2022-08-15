@@ -8,7 +8,7 @@ import * as firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css'
 
 import firebaseInstance from '../../services/firebase/firebase';
-import { getAuth, connectAuthEmulator, GoogleAuthProvider } from "firebase/auth"
+import { initializeAuth, connectAuthEmulator, GoogleAuthProvider } from "firebase/auth"
 import { useUserContext } from '../../contexts/userContext';
 import colors from '../../style/themes/colors';
 
@@ -16,7 +16,7 @@ interface LoginProps {
 
 };
 
-const auth = getAuth(firebaseInstance)
+const auth = initializeAuth(firebaseInstance)
 if (window.location.hostname === "localhost") {
     console.log("Connecting to authentication emulator on port ", 9099)
     connectAuthEmulator(auth, "http://localhost:9099");

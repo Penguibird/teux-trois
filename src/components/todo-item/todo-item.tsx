@@ -7,7 +7,7 @@ import { Draggable } from 'react-beautiful-dnd';
 import Todo from '../../types/Todo'
 import Input from './todo-item-input/todo-item-input';
 import Button, { StyledButton } from './todo-item-button/todo-item-button';
-import useOptionalPortal from './../../hooks/useOptionalPortal';
+import useOptionalPortal from '../../hooks/useOptionalPortal';
 
 const TextWrapper = styled.p`
     position: relative;

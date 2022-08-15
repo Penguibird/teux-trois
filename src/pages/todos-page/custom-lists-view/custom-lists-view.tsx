@@ -21,9 +21,9 @@ import { Droppable } from 'react-beautiful-dnd';
 import HandleIcon from '../../../assets/images/handle-icon';
 import { useDragObserverContext } from '../../../contexts/dragContext';
 import useMoveCustomLists from './useMoveCustomLists';
-import UnstyledButton from './../../../components-style/unstyledButton';
-import CrossIcon from './../../../assets/images/cross-icon';
-import { TopBar } from './../../../components-style/list-topbar';
+import UnstyledButton from '../../../components-style/unstyledButton';
+import CrossIcon from '../../../assets/images/cross-icon';
+import { TopBar } from '../../../components-style/list-topbar';
 import { useNumberOfListsInRowQuery } from '../../../hooks/useNumberOfListsInRowQuery';
 import { css } from '@emotion/react';
 import { setDoc, updateDoc, deleteDoc, doc } from "firebase/firestore"

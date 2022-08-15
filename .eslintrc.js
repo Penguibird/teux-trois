@@ -9,10 +9,13 @@ module.exports = {
     "extends": [
         "react-app",
         "react-app/jest"
-    ],
+    ],   
+     "ignorePatterns": ["*.html"],
+    
     parserOptions: {
-        project: ["tsconfig.json", "functions/tsconfig.json"],
+        project: ["tsconfig.json","extension/tsconfig.json", "functions/tsconfig.json"],
         sourceType: "module",
+        
     },
 
     "overrides": [

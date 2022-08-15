@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import * as React from 'react';
 //import {Fragment, useState, useEffect} from 'react';
-import useOutsideAlerter from './../../hooks/useOutsideAlerter';
+import useOutsideAlerter from '../../hooks/useOutsideAlerter';
 
 
 interface dropdownOpenState {

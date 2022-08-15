@@ -15,13 +15,13 @@ import { MONTHNAMES } from '../../utils/dateHelpers'
 
 import AddTodoItem from '../add-todo-item/add-todo-item';
 import { TodoContextProvider, useTodoContext } from './context';
-import compareObjects from './../../utils/compareObjects';
+import compareObjects from '../../utils/compareObjects';
 import EditableHeader from './listHeader/editable-header';
 import useTodoListCallbacks from './useTodoListCallbacks';
 import useTodos from './useTodos';
 import { useItemMoveObserverContext } from '../../contexts/itemMoveObserverContext';
 import { useDragObserverContext } from '../../contexts/dragContext';
-import { TopBar } from './../../components-style/list-topbar';
+import { TopBar } from '../../components-style/list-topbar';
 import { useNumberOfListsInRowQuery } from '../../hooks/useNumberOfListsInRowQuery';
 import { EventBusProvider, useEventBus } from '../../contexts/eventBusContext';
 

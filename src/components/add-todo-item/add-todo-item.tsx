@@ -4,7 +4,7 @@ import { jsx } from '@emotion/core';
 import * as React from 'react';
 import { SerializedStyles } from '@emotion/react';
 // import styled from '@emotion/styled';
-import { StyledInputCss } from './../../components-style/styledInput';
+import { StyledInputCss } from '../../components-style/styledInput';
 
 interface AddTodoItemProps {
     addNewItem: (t: string) => void
