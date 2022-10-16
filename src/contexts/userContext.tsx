@@ -1,14 +1,18 @@
 import React, { useContext, useState, createContext, useMemo, } from 'react';
 import type { User } from "firebase/auth"
 import { auth } from '../services/firebase/auth';
+import firebaseInstance from '../services/firebase/firebase';
 
 interface userStateType {
     user: User | null;
     setUser: React.Dispatch<React.SetStateAction<User | null>> | null;
 }
 
+const userString = window.localStorage.getItem(`firebase:authUser:${firebaseInstance.options.apiKey}:[DEFAULT]`);
+const defUser = auth.currentUser ?? (userString ? JSON.parse(userString) : null);
+
 const UserContext = createContext<userStateType>({
-    user: auth.currentUser,
+    user: defUser,
     setUser: null,
 });
 
@@ -25,7 +29,7 @@ const useUserContext = () => {
 
 const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<User | null>(defUser);
 
     const value = useMemo(() => ({ user, setUser }), [user]);
 

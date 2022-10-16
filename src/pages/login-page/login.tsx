@@ -30,7 +30,7 @@ const Login: React.FC<LoginProps> = ({ }) => {
 
     useEffect(() => {
         ui.start('#firebaseui-auth-container', {
-
+            autoUpgradeAnonymousUsers: true,
             signInOptions: [
                 // firebase.auth.EmailAuthProvider.PROVIDER_ID,
                 GoogleAuthProvider.PROVIDER_ID,
@@ -38,12 +38,18 @@ const Login: React.FC<LoginProps> = ({ }) => {
                 // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
                 // firebase.auth.GithubAuthProvider.PROVIDER_ID
             ],
+            callbacks: {
+                signInFailure: (e) => {
+                    if (e)
+                        console.error(e);
+                }
+            }
             // Other config options...
         });
 
     }, [])
 
-    
+
     const style = { "--border-color": colors.colors.borderGray } as React.CSSProperties;
 
     return <div>
