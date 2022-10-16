@@ -4,24 +4,19 @@ import { useEffect } from 'react';
 import './login.css';
 
 // import firebase from 'firebase/compat/app';
-import * as firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css'
 
-import firebaseInstance from '../../services/firebase/firebase';
-import { initializeAuth, connectAuthEmulator, GoogleAuthProvider } from "firebase/auth"
+import { GoogleAuthProvider } from "firebase/auth"
 import { useUserContext } from '../../contexts/userContext';
 import * as colors from '../../style/themes/colors';
+import { auth, } from '../../services/firebase/auth';
+import * as firebaseui from 'firebaseui';
 
 interface LoginProps {
 
 };
 
-const auth = initializeAuth(firebaseInstance)
-if (window.location.hostname === "localhost") {
-    console.log("Connecting to authentication emulator on port ", 9099)
-    connectAuthEmulator(auth, "http://localhost:9099");
-}
-var ui = new firebaseui.auth.AuthUI(auth);
+export var ui = new firebaseui.auth.AuthUI(auth);
 
 const Login: React.FC<LoginProps> = ({ }) => {
 
@@ -35,6 +30,7 @@ const Login: React.FC<LoginProps> = ({ }) => {
 
     useEffect(() => {
         ui.start('#firebaseui-auth-container', {
+
             signInOptions: [
                 // firebase.auth.EmailAuthProvider.PROVIDER_ID,
                 GoogleAuthProvider.PROVIDER_ID,
@@ -47,6 +43,7 @@ const Login: React.FC<LoginProps> = ({ }) => {
 
     }, [])
 
+    
     const style = { "--border-color": colors.colors.borderGray } as React.CSSProperties;
 
     return <div>

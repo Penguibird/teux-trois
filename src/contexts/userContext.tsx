@@ -1,5 +1,6 @@
 import React, { useContext, useState, createContext, useMemo, } from 'react';
 import type { User } from "firebase/auth"
+import { auth } from '../services/firebase/auth';
 
 interface userStateType {
     user: User | null;
@@ -7,7 +8,7 @@ interface userStateType {
 }
 
 const UserContext = createContext<userStateType>({
-    user: null,
+    user: auth.currentUser,
     setUser: null,
 });
 
