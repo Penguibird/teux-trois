@@ -19,8 +19,8 @@ module.exports = {
   },
   ignorePatterns: [
     "/lib/**/*", // Ignore built files.
+    "rollup.config.mjs",
   ],
-
   rules: {
     "quotes": ["error", "double"],
     "import/no-unresolved": 0,

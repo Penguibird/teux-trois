@@ -11,6 +11,8 @@ import { useUserContext } from '../../contexts/userContext';
 import * as colors from '../../style/themes/colors';
 import { auth, } from '../../services/firebase/auth';
 import * as firebaseui from 'firebaseui';
+import { useFirestore } from '../../contexts/useFirestore';
+import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 
 interface LoginProps {
 
@@ -22,10 +24,17 @@ const Login: React.FC<LoginProps> = ({ }) => {
 
     const { setUser } = useUserContext();
 
-    auth.onAuthStateChanged((user) => {
+    const db = useFirestore();
+
+    auth.onAuthStateChanged(async (user) => {
         if (!user || !setUser)
             return;
+
+        const userDoc = doc(collection(db, 'users'), user.uid)
         setUser(user)
+        if (!(await getDoc(userDoc)).exists()) 
+            await setDoc(userDoc, {userExists: true})
+        console.log("User successfulyl created")
     })
 
     useEffect(() => {

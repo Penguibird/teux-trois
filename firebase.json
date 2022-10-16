@@ -25,7 +25,8 @@
     },
     "firestore": {
       "host": "127.0.0.1",
-      "port": 8080
+      "port": 8080,
+      "rules": "rules_version = '2'; \n service cloud.firestore { \n match /databases/{database}/documents { \n match /users/{document} { \n match /{doc=**} { \n allow read, write: if (request.auth != null && request.auth.uid == document) || true; \n } \n } \n } \n }"
     },
     "hosting": {
       "host": "127.0.0.1",

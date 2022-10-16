@@ -51,7 +51,7 @@ module.exports = {
      "ignorePatterns": ["*.html"],
     
     parserOptions: {
-        project: ["tsconfig.json", "functions/tsconfig.json"],
+        project: ["tsconfig.json"],
         sourceType: "module",
         
     },

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { UserContextProvider } from './contexts/userContext';
 import Router from './components/router';
 import './style/main.css'
+import { FirestoreProvider } from './contexts/useFirestore';
 
 interface AppProps {
 
@@ -10,7 +11,10 @@ interface AppProps {
 const App: React.FC<AppProps> = ({ }) => {
 
     return <UserContextProvider>
-        <Router />
+        <FirestoreProvider>
+
+            <Router />
+        </FirestoreProvider>
     </UserContextProvider>
 }
 
