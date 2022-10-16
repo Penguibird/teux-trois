@@ -97,12 +97,23 @@ const UnwrappedTodosPage: React.FC<TodosPageProps> = ({ }) => {
     >
         <DragDropContext onDragStart={blurAllInputs} onDragEnd={onDragEnd}>
             <DraggablePortal id="draggable" />
+            <Flex>
+
             <WeekView />
             <CustomListsView />
+            </Flex>
         </DragDropContext>
     </Layout>
 }
 
+const Flex = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0;
+    height: 100%;
+`;
 const TodosPage = (props: TodosPageProps) => {
     return <>
         <FirestoreProvider>

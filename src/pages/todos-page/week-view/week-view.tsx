@@ -27,7 +27,7 @@ const MainWrapperGrid = styled.div`
     margin-top: 80px;
 `
 const TodoListGrid = styled.div<{ leftShift?: string }>`
-    height: 40vh;
+    /* height: 40vh; */
     width: max-content;
     overflow: hidden;
     display: flex;
@@ -85,7 +85,7 @@ const UnwrappedWeekView: React.FC<WeekViewProps> = ({ }) => {
         }
     }, [days, number, onToday, today])
 
-    return <MainWrapperGrid>
+    return <MainWrapperGrid style={{flex: '1 0 auto'}}>
         <SideBar left>
             <ShiftingButton size='4em' red onClick={move.oneLeft}>
                 <ArrowIcon direction='left' />

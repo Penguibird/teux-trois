@@ -55,6 +55,7 @@ const DeleteButton = styled(IconButton)`
 
 
 const BottomWrapperGrid = styled(MainWrapperGrid)`
+/* max-height: 40vh; */
     margin-top: 0;
     grid-template-rows: 2.5em 1fr;
     & > * {
@@ -230,7 +231,7 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
 
     // console.log(leftShift)
 
-    return <BottomWrapperGrid>
+    return <BottomWrapperGrid style={{flex: showCustomLists ? '1 0 auto' : '0 0 auto'}}>
         <TopRibbon>
             <LeftJustifiedButton size='2em' onClick={toggleCustomLists}>
                 <ArrowIcon direction={showCustomLists ? 'down' : 'up'} />
