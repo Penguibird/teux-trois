@@ -42,8 +42,9 @@ const TodoListGrid = styled.div<{ leftShift?: string }>`
         /* flex: 1 1 0; */
     }
 `
-const ShiftingButton = styled(Button) <ButtonProps>`
-    transform: translateX(${props => props.flipped && '-'}.2em);
+const ShiftingButton = styled(Button)<ButtonProps>`
+/* // @ts-ignore */
+    transform: translateX(${props => props.flipped && '-'} 0.2em);
     transition: transform .1s ease-in-out;
 `
 
@@ -76,9 +77,9 @@ const UnwrappedWeekView: React.FC<WeekViewProps> = ({ }) => {
             numberRef.current = number;
             onToday?.();
             for (let i = days.indexOf(today); i < number; i++) {
-                if (!days[i]) {
+                if (!days[i])
                     days[i] = (i - days.indexOf(today)) * DAYINMILIS + today;
-                }
+
             }
             setDays([...days])
         }
@@ -132,11 +133,11 @@ const getDateObjectsForTheCurrentWeek = (behavior: UserPreferences['weekListBeha
     const dayOfTheWeek = date.getDay();
 
     let mondayOfThisWeek: number;
-    if (behavior === 'startAtMonday') {
+    if (behavior === 'startAtMonday')
         mondayOfThisWeek = today - ((dayOfTheWeek - 1) * DAYINMILIS);
-    } else if (behavior === 'startAtYesterday') {
+    else if (behavior === 'startAtYesterday')
         mondayOfThisWeek = today - (1 * DAYINMILIS);
-    } else {
+    else {
         // if (behavior === 'startAtToday') 
         mondayOfThisWeek = today;
     }

@@ -3,7 +3,7 @@ import * as React from 'react';
 import Login from './login';
 import Layout from '../../components-style/layout';
 import styled from '@emotion/styled';
-import colors from '../../style/themes/colors';
+import * as colors from '../../style/themes/colors';
 
 interface LoginPageProps {
 

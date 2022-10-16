@@ -41,8 +41,8 @@ export const FirestoreProvider = ({ children }: { children: React.ReactNode }) =
 
 export const useFirestore = () => {
     const db = React.useContext(FirestoreContext);
-    if (!db) {
+    if (!db) 
         throw new Error("Firestore cannot be used outside context or before initialization")
-    }
+    
     return db;
 }

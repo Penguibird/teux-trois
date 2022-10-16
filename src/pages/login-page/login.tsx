@@ -10,7 +10,7 @@ import 'firebaseui/dist/firebaseui.css'
 import firebaseInstance from '../../services/firebase/firebase';
 import { initializeAuth, connectAuthEmulator, GoogleAuthProvider } from "firebase/auth"
 import { useUserContext } from '../../contexts/userContext';
-import colors from '../../style/themes/colors';
+import * as colors from '../../style/themes/colors';
 
 interface LoginProps {
 

@@ -177,7 +177,8 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
     }, [move])
 
     const onAddNewItem = React.useCallback((t: string) => {
-        if (!setTodoLists) return;
+        if (!setTodoLists)
+            return;
         const id = v4();
         const newTodoList: TodoListType = {
             docId: id,
@@ -198,7 +199,8 @@ const UnwrappedCustomListView: React.FC<CustomListsViewProps> = ({ }) => {
         deleteDoc(doc(collectionRef, todoLists[i].docId));
         todoLists.splice(i, 1);
         setTodoLists([...todoLists]);
-        if (leftShift !== 0) move.oneLeft();
+        if (leftShift !== 0)
+            move.oneLeft();
     }
 
     const onDragEnd = React.useCallback((result: DropResult,) => {

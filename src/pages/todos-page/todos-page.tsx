@@ -11,7 +11,7 @@ import styled from '@emotion/styled';
 import { useUserContext } from '../../contexts/userContext';
 import Dropdown from '../../components/dropdown/dropdown';
 import { css } from '@emotion/css';
-import colors from '../../style/themes/colors';
+import * as colors from '../../style/themes/colors';
 import UnstyledButton from '../../components-style/unstyledButton';
 import { FirestoreProvider } from '../../contexts/useFirestore';
 import { getAuth } from '@firebase/auth';
@@ -54,16 +54,16 @@ const DropdownItem = styled(UnstyledButton)`
 
 const UnwrappedTodosPage: React.FC<TodosPageProps> = ({ }) => {
 
-    React.useEffect(()=>{
-       testConsolePlugin.init(EventBusList.getEventBus(getDateId(Date.now())))
-    },[])
+    React.useEffect(() => {
+        testConsolePlugin.init(EventBusList.getEventBus(getDateId(Date.now())))
+    }, [])
     const { publish } = useDragObserverContext();
     const onDragEnd = (result: DropResult) => {
-        if (result.type === "CUSTOMLISTS") {
+        if (result.type === "CUSTOMLISTS")
             publish(result, "CUSTOMLISTS")
-        } else {
+        else
             publish(result, result.source.droppableId)
-        }
+
     }
 
     const user = useUserContext();

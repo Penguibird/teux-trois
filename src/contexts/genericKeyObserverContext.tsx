@@ -17,7 +17,8 @@ function generateObserverContext<T>() {
         } = {};
 
         const subscribe = (listener: listener<T>, id: string) => {
-            if (!listeners[id]) listeners[id] = [];
+            if (!listeners[id])
+                listeners[id] = [];
             const index = listeners[id].length;
             listeners[id].push(listener);
             return () => {

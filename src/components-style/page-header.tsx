@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import * as React from 'react';
-import colors from '../style/themes/colors';
+import * as colors from '../style/themes/colors';
 //import {Fragment, useState, useEffect} from 'react';
 import Logo from './logo';
 
